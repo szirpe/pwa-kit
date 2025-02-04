@@ -1,3 +1,6 @@
+## v3.2.0-preview.0 (Feb 03, 2025)
+## v3.2.0-dev (Feb 03, 2025)
+## v3.9.0-preview.0 (Feb 03, 2025)
 ## v3.2.0-dev (Oct 29, 2024)
 - Allow cookies for ShopperLogin API [#2190](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2190
 - Fix refresh token TTL warning from firing when override is not provided [#2114](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2114)
