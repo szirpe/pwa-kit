@@ -51,7 +51,10 @@ const AppConfig = ({children, locals = {}}) => {
     }
 
     const commerceApiConfig = locals.appConfig.commerceAPI
+
     const appOrigin = useAppOrigin()
+
+    const passwordlessCallback = locals.appConfig.login?.passwordless?.callbackURI
 
     return (
         <CommerceApiProvider
@@ -62,6 +65,7 @@ const AppConfig = ({children, locals = {}}) => {
             locale={locals.locale?.id}
             currency={locals.locale?.preferredCurrency}
             redirectURI={`${appOrigin}/callback`}
+            passwordlessLoginCallbackURI={passwordlessCallback}
             proxy={`${appOrigin}${commerceApiConfig.proxyPath}`}
             headers={headers}
             defaultDnt={DEFAULT_DNT_STATE}

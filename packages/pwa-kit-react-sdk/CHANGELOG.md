@@ -1,3 +1,4 @@
+## v3.9.0-preview.1 (Feb 12, 2025)
 ## v3.9.0-preview.0 (Feb 03, 2025)
 ## v3.9.0-dev (Oct 29, 2024)
 - Fix the performance logging util to not round duration. [#2199](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2199)

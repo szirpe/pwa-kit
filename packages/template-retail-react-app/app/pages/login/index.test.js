@@ -19,6 +19,7 @@ import Registration from '@salesforce/retail-react-app/app/pages/registration'
 import ResetPassword from '@salesforce/retail-react-app/app/pages/reset-password'
 import mockConfig from '@salesforce/retail-react-app/config/mocks/default'
 import {mockedRegisteredCustomer} from '@salesforce/retail-react-app/app/mocks/mock-data'
+
 const mockMergedBasket = {
     basketId: 'a10ff320829cb0eef93ca5310a',
     currency: 'USD',
@@ -97,6 +98,7 @@ describe('Logging in tests', function () {
             })
         )
     })
+
     test('Allows customer to sign in to their account', async () => {
         const {user} = renderWithProviders(<MockedComponent />, {
             wrapperProps: {

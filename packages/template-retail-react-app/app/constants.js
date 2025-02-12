@@ -91,6 +91,19 @@ export const API_ERROR_MESSAGE = defineMessage({
     id: 'global.error.something_went_wrong',
     defaultMessage: 'Something went wrong. Try again!'
 })
+export const INVALID_TOKEN_ERROR_MESSAGE = defineMessage({
+    defaultMessage: 'Invalid token, please try again.',
+    id: 'global.error.invalid_token'
+})
+export const FEATURE_UNAVAILABLE_ERROR_MESSAGE = defineMessage({
+    defaultMessage: 'This feature is not currently available.',
+    id: 'global.error.feature_unavailable'
+})
+export const CREATE_ACCOUNT_FIRST_ERROR_MESSAGE = defineMessage({
+    defaultMessage:
+        'This feature is not currently available. You must create an account to access this feature.',
+    id: 'global.error.create_account'
+})
 
 export const HOME_HREF = '/'
 
@@ -232,3 +245,26 @@ export const SHOPPER_CONTEXT_SEARCH_PARAMS = {
         // Add assignment qualifiers here
     }
 }
+
+// Constants for Login
+export const LOGIN_TYPES = {
+    PASSWORD: 'password',
+    PASSWORDLESS: 'passwordless',
+    SOCIAL: 'social'
+}
+
+// Constants for Password Reset
+export const RESET_PASSWORD_LANDING_PATH = '/reset-password-landing'
+
+// Constants for Passwordless Login
+export const PASSWORDLESS_LOGIN_LANDING_PATH = '/passwordless-login-landing'
+
+export const PASSWORDLESS_ERROR_MESSAGES = [
+    /callback_uri doesn't match/i,
+    /passwordless permissions error/i,
+    /client secret is not provided/i
+]
+
+export const INVALID_TOKEN_ERROR = /invalid token/i
+
+export const USER_NOT_FOUND_ERROR = /user not found/i

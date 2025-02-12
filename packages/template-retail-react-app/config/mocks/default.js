@@ -19,6 +19,16 @@ module.exports = {
             site: 'path',
             showDefaults: true
         },
+        login: {
+            passwordless: {
+                enabled: false,
+                callbackURI: 'https://webhook.site/27761b71-50c1-4097-a600-21a3b89a546c'
+            },
+            social: {
+                enabled: false,
+                idps: ['google', 'apple']
+            }
+        },
         siteAliases: {
             'site-1': 'uk',
             'site-2': 'us'

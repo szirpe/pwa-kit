@@ -450,8 +450,11 @@ test('Can proceed through checkout as registered customer', async () => {
     })
 
     // Select a saved address and continue
-    await user.click(screen.getByDisplayValue('savedaddress1'))
-    await user.click(screen.getByText(/continue to shipping method/i))
+    await waitFor(() => {
+        const address = screen.getByDisplayValue('savedaddress1')
+        user.click(address)
+        user.click(screen.getByText(/continue to shipping method/i))
+    })
 
     // Wait for next step to render
     await waitFor(() => {

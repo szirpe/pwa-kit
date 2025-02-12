@@ -111,3 +111,35 @@ export function detectCookiesAvailable(options?: CookieAttributes) {
         return false
     }
 }
+
+/**
+ * Determines whether the given URL string is a valid absolute URL.
+ *
+ * Valid absolute URLs:
+ * - https://example.com
+ * - http://example.com
+ *
+ * Invalid or relative URLs:
+ * - http://example
+ * - example.com
+ * - /relative/path
+ *
+ * @param {string} url - The URL string to be checked.
+ * @returns {boolean} - Returns true if the given string is a valid absolute URL, false otherwise.
+ */
+export function isAbsoluteUrl(url: string): boolean {
+    return /^(https?:\/\/)/i.test(url)
+}
+
+/**
+ * Provides a platform-specific method for Base64 encoding.
+ *
+ * - In a browser environment (where `window` and `document` are defined),
+ *   the native `btoa` function is used.
+ * - In a non-browser environment (like Node.js), a fallback is provided
+ *   that uses `Buffer` to perform the Base64 encoding.
+ */
+export const stringToBase64 =
+    typeof window === 'object' && typeof window.document === 'object'
+        ? btoa
+        : (unencoded: string): string => Buffer.from(unencoded).toString('base64')
