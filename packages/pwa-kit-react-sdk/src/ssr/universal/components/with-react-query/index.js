@@ -79,14 +79,14 @@ export const withReactQuery = (Wrapped, options = {}) => {
                     // always include the index to avoid duplicate entries
                     const displayName = q.meta?.displayName ? `${q.meta?.displayName}:${i}` : `${i}`
                     res.__performanceTimer.mark(
-                        `${PERFORMANCE_MARKS.reactQueryUseQuery}::${displayName}`,
+                        `${PERFORMANCE_MARKS.reactQueryUseQuery}.${displayName}`,
                         'start'
                     )
                     return q
                         .fetch()
                         .then((result) => {
                             res.__performanceTimer.mark(
-                                `${PERFORMANCE_MARKS.reactQueryUseQuery}::${displayName}`,
+                                `${PERFORMANCE_MARKS.reactQueryUseQuery}.${displayName}`,
                                 'end',
                                 {
                                     detail: q.queryHash
