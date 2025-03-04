@@ -321,6 +321,31 @@ const PRESETS = [
         private: true
     },
     {
+        id: 'retail-react-app-bug-bounty',
+        name: 'Retail React App Bug Bounty Project',
+        description: '',
+        templateSource: {
+            type: TEMPLATE_SOURCE_NPM,
+            id: '@salesforce/retail-react-app'
+        },
+        questions: [...EXTENSIBILITY_QUESTIONS, ...RETAIL_REACT_APP_QUESTIONS],
+        answers: {
+            ['project.extend']: true,
+            ['project.hybrid']: false,
+            ['project.name']: 'retail-react-app',
+            ['project.commerce.instanceUrl']: 'https://zzec-006.dx.commercecloud.salesforce.com',
+            ['project.commerce.clientId']: 'b56e7ad3-2237-42c9-8f55-41e63ebca420',
+            ['project.commerce.siteId']: 'RefArch',
+            ['project.commerce.organizationId']: 'f_ecom_zzec_006',
+            ['project.commerce.shortCode']: 'staging-001',
+            ['project.einstein.clientId']: '1ea06c6e-c936-4324-bcf0-fada93f83bb1',
+            ['project.einstein.siteId']: 'aaij-MobileFirst',
+            ['project.commerce.isSlasPrivate']: true
+        },
+        assets: ['translations'],
+        private: true
+    },
+    {
         id: 'retail-react-app-hybrid-test-project',
         name: 'Retail React App Hybrid Test Private SLAS Project',
         description: '',
