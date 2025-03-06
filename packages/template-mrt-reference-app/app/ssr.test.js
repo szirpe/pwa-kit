@@ -59,7 +59,8 @@ describe('server', () => {
         ['/cache', 200, 'application/json; charset=utf-8'],
         ['/cookie', 200, 'application/json; charset=utf-8'],
         ['/set-response-headers', 200, 'application/json; charset=utf-8'],
-        ['/isolation', 200, 'application/json; charset=utf-8']
+        ['/isolation', 200, 'application/json; charset=utf-8'],
+        ['/memtest', 200, 'application/json; charset=utf-8']
     ])('Path %p should render correctly', (path, expectedStatus, expectedContentType) => {
         return request(app)
             .get(path)

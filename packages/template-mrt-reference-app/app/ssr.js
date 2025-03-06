@@ -124,7 +124,7 @@ const filterAndSortObjectKeys = (o, whitelist) =>
 /**
  * Return a JSON-serializable object with key diagnostic values from a request
  */
-const jsonFromRequest = (req) => {
+const jsonFromRequest = (req, additional_info) => {
     return {
         args: req.query,
         protocol: req.protocol,
@@ -136,7 +136,8 @@ const jsonFromRequest = (req) => {
         headers: sortObjectKeys(req.headers),
         ip: req.ip,
         env: filterAndSortObjectKeys(process.env, ENVS_TO_EXPOSE),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        ...(typeof additional_info === 'object' ? {additional_info} : {})
     }
 }
 
@@ -208,6 +209,98 @@ const responseHeadersTest = async (req, res) => {
 }
 
 /**
+ * Express handler that allocates a lot of memory, and then removes
+ * a reference to the objects, such that they may be garbage collected.
+ */
+const memoryTest = async (req, res) => {
+    const memory_before = process.memoryUsage()
+    const test_count = req?.query?.count ? parseInt(req.query.count) : 1
+    const test_size = req?.query?.size ? parseInt(req.query.size) : 1024
+    const force_gc =
+        global?.gc && req?.query && (parseBoolean(req.query.forcegc) || parseBoolean(req.query.gc))
+
+    // allocate temporary memory blocks
+    const malloc_time_start = Date.now()
+    allocateMemory(test_count, test_size)
+    const malloc_time_ms = Date.now() - malloc_time_start
+
+    const gc_time_start = Date.now()
+    if (force_gc) {
+        global.gc()
+    }
+    const gc_time_ms = Date.now() - gc_time_start
+
+    const memory_after = process.memoryUsage()
+    const memory_delta = calculateNumericDeltas(memory_after, memory_before)
+    const factor = 10
+    const test_total_alloc_mb =
+        Math.round(((test_count * test_size) / 1024 / 1024) * factor) / factor
+    const additional_info = {
+        memory_end: memory_after,
+        memory_delta: memory_delta,
+        malloc_time: malloc_time_ms,
+        gc_time: gc_time_ms,
+        force_gc: force_gc,
+        test_count: test_count,
+        test_size: test_size,
+        test_total_alloc_mb: test_total_alloc_mb
+    }
+    res.json(jsonFromRequest(req, additional_info))
+}
+
+/**
+ * Allocate memory and lose the reference to it (so it can be cleaned up).
+ */
+function allocateMemory(test_count, test_size) {
+    const buffer = []
+    for (let index = 0; index < test_count; index++) {
+        buffer.push(Buffer.alloc(test_size, 0, 'ascii'))
+    }
+    return buffer.length
+}
+
+/**
+ * Calculate the numeric differences between two objects.
+ */
+function calculateNumericDeltas(obj1, obj2) {
+    const delta = {}
+    for (const key in obj1) {
+        if (
+            Object.prototype.hasOwnProperty.call(obj1, key) &&
+            Object.prototype.hasOwnProperty.call(obj2, key)
+        ) {
+            if (typeof obj1[key] === 'number' && typeof obj2[key] === 'number') {
+                delta[key] = obj1[key] - obj2[key]
+            }
+        }
+    }
+    return delta
+}
+
+/**
+ * Parse boolean value from string
+ */
+function parseBoolean(string_value) {
+    if (
+        string_value === null ||
+        string_value === undefined ||
+        typeof string_value !== 'string' ||
+        string_value.trim() === ''
+    ) {
+        return false
+    }
+    const lowerCaseValue = string_value.toLowerCase()
+    return (
+        lowerCaseValue === 'true' ||
+        lowerCaseValue === '1' ||
+        lowerCaseValue === 'on' ||
+        lowerCaseValue === 'enable' ||
+        lowerCaseValue === 'enabled' ||
+        lowerCaseValue === 'yes'
+    )
+}
+
+/**
  * Express handler that echos back a JSON response with
  * headers supplied in the request.
  */
@@ -273,6 +366,7 @@ const {handler, app, server} = runtime.createHandler(options, (app) => {
     app.get('/tls', tlsVersionTest)
     app.get('/cache', cacheTest)
     app.get('/cache/:duration(\\d+)', cacheTest)
+    app.get('/memtest', memoryTest)
     app.get('/cookie', cookieTest)
     app.get('/headers', headerTest)
     app.get('/isolation', isolationTests)

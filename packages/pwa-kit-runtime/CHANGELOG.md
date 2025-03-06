@@ -1,3 +1,7 @@
+## v3.9.1 (Mar 05, 2025)
+- Update PWA-Kit SDKs to v3.9.1 [#2301](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2301)
+- Remove forced garbage collection on each invocation. Set `FORCE_GC=true` for the old behavior.
+
 ## v3.9.0 (Feb 18, 2025)
 - Fix stale service worker file that could cause requests to still use old Content-Security-Policy [#2191](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2191)
 - Support Node 22 [#2218](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2218)

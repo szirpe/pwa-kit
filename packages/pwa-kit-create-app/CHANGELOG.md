@@ -1,3 +1,6 @@
+## v3.9.1 (Mar 05, 2025)
+- Update PWA-Kit SDKs to v3.9.1 [#2301](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2301)
+
 ## v3.9.0 (Feb 18, 2025)
 
 - Update `default.js` and `ssr.js` template to support new passwordless, social, and reset password flows. [#2263] (https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2263)

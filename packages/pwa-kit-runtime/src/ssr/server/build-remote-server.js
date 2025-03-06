@@ -388,6 +388,8 @@ export const RemoteServerFactory = {
         const mixin = {
             options,
 
+            // Forcing a GC is no longer necessary, and will be
+            // skipped by default (unless FORCE_GC env-var is set).
             _collectGarbage() {
                 // Do global.gc in a separate 'then' handler so
                 // that all major variables are out of scope and
@@ -1044,12 +1046,15 @@ export const RemoteServerFactory = {
             context.callbackWaitsForEmptyEventLoop = false
 
             if (lambdaContainerReused) {
-                // DESKTOP-434 If this Lambda container is being reused,
-                // clean up memory now, so that we start with low usage.
-                // These regular GC calls take about 80-100 mS each, as opposed
-                // to forced GC calls, which occur randomly and can take several
-                // hundred mS.
-                app._collectGarbage()
+                const forceGarbageCollection = process.env.FORCE_GC
+                if (forceGarbageCollection && forceGarbageCollection.toLowerCase() === 'true') {
+                    // DESKTOP-434 If this Lambda container is being reused,
+                    // clean up memory now, so that we start with low usage.
+                    // These regular GC calls take about 80-100 mS each, as opposed
+                    // to forced GC calls, which occur randomly and can take several
+                    // hundred mS.
+                    app._collectGarbage()
+                }
                 app.sendMetric('LambdaReused')
             } else {
                 // This is the first use of this container, so set the

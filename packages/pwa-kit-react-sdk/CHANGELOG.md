@@ -1,3 +1,6 @@
+## v3.9.1 (Mar 05, 2025)
+- Update PWA-Kit SDKs to v3.9.1 [#2301](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2301)
+
 ## v3.9.0 (Feb 18, 2025)
 - Fix the performance logging util to not round duration. [#2199](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2199)
 - Add RedirectWithStatus component, allowing finer grained control of rediriects and their status code [#2173](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2173)
