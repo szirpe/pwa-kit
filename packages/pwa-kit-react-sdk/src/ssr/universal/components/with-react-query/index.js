@@ -77,7 +77,7 @@ export const withReactQuery = (Wrapped, options = {}) => {
             await Promise.all(
                 queries.map((q, i) => {
                     // always include the index to avoid duplicate entries
-                    const displayName = q.meta?.displayName ? `${q.meta?.displayName}:${i}` : `${i}`
+                    const displayName = q.meta?.displayName ? `${q.meta?.displayName}-${i}` : `${i}`
                     res.__performanceTimer.mark(
                         `${PERFORMANCE_MARKS.reactQueryUseQuery}.${displayName}`,
                         'start'
