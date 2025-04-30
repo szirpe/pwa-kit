@@ -5,7 +5,7 @@
 - Send PWA Kit events to Data Cloud [#318] (https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2229)
 - Fix dependencies vulnerabilities [#2338](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2338)
 - Fix accessibility issues [#2375](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2375)
-- Update cc-datacloud-typescript package to use a fixed lock version [#2391](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2391)
+- Update cc-datacloud-typescript package to use a fixed lock version [#2392](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2391)
 
 ## v6.0.1 (Mar 05, 2025)
 - Update PWA-Kit SDKs to v3.9.1 [#2301](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2301)
