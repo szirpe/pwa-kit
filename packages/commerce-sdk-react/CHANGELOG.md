@@ -1,6 +1,4 @@
 ## v3.3.0-dev.1 (Apr 30, 2025)
-## v3.3.0-dev (Apr 30, 2025)
-## v3.10.0-dev.1 (Apr 30, 2025)
 ## v3.3.0-dev (Feb 18, 2025)
 - Invalidate cache instead of removing cache when triggering logout [#2323](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2323)
 - Fix dependencies vulnerabilities [#2338](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2338)
