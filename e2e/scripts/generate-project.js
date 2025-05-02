@@ -10,7 +10,7 @@ const {program} = require('commander')
 const {mkdirIfNotExists} = require('./utils.js')
 
 const main = async (opts) => {
-    const {projectKey, projectConfig} = opts
+    const {projectKey, projectConfig, templateVersion} = opts
 
     if (!projectKey && !projectConfig) {
         console.error('You must provide either <project-key> or <project-config>.')
@@ -44,6 +44,11 @@ const main = async (opts) => {
         if (preset) {
             generateAppCommand = `${config.GENERATOR_CMD} ${outputDir} --preset ${preset}`
         }
+
+        if (templateVersion) {
+            generateAppCommand = `${generateAppCommand} --templateVersion ${templateVersion}`
+        }
+        console.log('Running command:', generateAppCommand)
         return await runGeneratorWithResponses(generateAppCommand, cliResponses)
     } catch (err) {
         // Generator failed to create project
@@ -78,6 +83,7 @@ program
             throw new Error('Invalid JSON string.')
         }
     })
+    .option('--templateVersion <templateVersion>', 'Template version used to generate the project')
     .action((options) => {
         // Call the main function with parsed options
         main(options)
