@@ -30,7 +30,7 @@ export const handleInvalidToken = async (error: any, auth: Auth, logger: Logger)
 }
 
 /**
- * A helper function for preparing a call to the SCAPI custom API endpoint.
+ * A helper function for preparing a call to the SCAPI custom API endpoint
  */
 export const generateCustomEndpointOptions = (
     options: OptionalCustomEndpointClientConfig,
