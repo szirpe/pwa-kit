@@ -203,3 +203,34 @@ describe('buildRedirectURI', function () {
         expect(result).toBe('')
     })
 })
+
+describe('isHydrated', () => {
+    const originalWindow = global.window
+    
+    beforeEach(() => {
+        // Mock window object
+        global.window = {
+            __HYDRATING__: false
+        }
+    })
+
+    afterEach(() => {
+        // Restore original window object
+        global.window = originalWindow
+    })
+
+    test('returns true when hydration is complete', () => {
+        global.window.__HYDRATING__ = false
+        expect(utils.isHydrated()).toBe(true)
+    })
+
+    test('returns false when hydration is in progress', () => {
+        global.window.__HYDRATING__ = true
+        expect(utils.isHydrated()).toBe(false)
+    })
+
+    test('returns false when window is undefined', () => {
+        global.window = undefined
+        expect(utils.isHydrated()).toBe(false)
+    })
+})
