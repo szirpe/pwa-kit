@@ -1,11 +1,8 @@
-## v7.0.0-dev (May 20, 2025)
-
-### Other Changes
+## v7.0.0-dev.0 (May 20, 2025)
 
 - Improved the layout of product tiles in product scroll and product list [#2446](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2446)
-- Update the configuration of datacloud [#2467](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2467)
 
-## v6.1.0-dev (Feb 18, 2025)
+## v6.1.0 (May 22, 2025)
 
 - Fix hreflang alternate links [#2269](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2269)
 - PDP / PLP: Add page meta data tags that have been defined in BM [#2232](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2232)
@@ -14,6 +11,7 @@
 - Fix accessibility issues [#2375](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2375)
 - Update cc-datacloud-typescript package to use a fixed lock version [#2392](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2392)
 - Add Confirm New Password input field to Reset & Change Password flows [#2395](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2395)
+- Update the configuration of datacloud [#2467](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2467)
 
 ## v6.0.1 (Mar 05, 2025)
 - Update PWA-Kit SDKs to v3.9.1 [#2301](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2301)

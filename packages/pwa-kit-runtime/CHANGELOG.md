@@ -1,5 +1,6 @@
-## v3.10.0-dev.1 (Apr 30, 2025)
-## v3.10.0-dev (Feb 18, 2025)
+## v3.11.0-dev.0 (May 23, 2025)
+
+## v3.10.0 (May 22, 2025)
 
 ## v3.9.2 (Mar 08, 2025)
 - Disable CloudWatch metrics sender retries [#2304](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2304) 
