@@ -28,6 +28,7 @@ import {
     baskets as mockBaskets,
     products as mockProducts
 } from '@salesforce/retail-react-app/app/pages/cart/cart.mock'
+import userEvent from '@testing-library/user-event'
 
 const mockProduct = {
     ...mockVariant,
@@ -917,4 +918,27 @@ describe('Unavailable products tests', function () {
             ).not.toBeInTheDocument()
         })
     })
+})
+
+test('shows error toast when updating cart item fails', async () => {
+    // Mock the update item API to fail
+    global.server.use(
+        rest.patch('*/baskets/:basketId/items/:itemId', (req, res, ctx) => {
+            return res(ctx.status(500))
+        })
+    )
+
+    renderWithProviders(<Cart />)
+    await waitFor(() => expect(screen.getByTestId('sf-cart-container')).toBeInTheDocument())
+
+    // Find the first "Edit" button and click it to open the edit modal
+    const editButtons = await screen.findAllByRole('button', {name: /edit/i})
+    await userEvent.click(editButtons[0])
+
+    // In the modal, find and click the "Update" or "Save" button (adjust selector as needed)
+    const updateButton = await screen.findByRole('button', {name: /update|save/i})
+    await userEvent.click(updateButton)
+
+    // Wait for the error toast to appear
+    await waitFor(() => expect(screen.getByText(/something went wrong/i)).toBeInTheDocument())
 })
