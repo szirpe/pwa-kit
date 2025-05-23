@@ -18,7 +18,7 @@ export const STALE_WHILE_REVALIDATE = 60 * 15 // 15 min
 export const DEFAULT_SEARCH_PARAMS = {limit: 25, offset: 0, sort: 'best-matches', refine: []}
 export const DEFAULT_LIMIT_VALUES = [25, 50, 100] // Page sizes
 
-//Constants for customer orders searching.
+// Constants for customer orders searching.
 export const DEFAULT_ORDERS_SEARCH_PARAMS = {limit: 10, offset: 0, sort: 'best-matches', refine: []}
 
 // Constants for Search Component
@@ -27,11 +27,11 @@ export const RECENT_SEARCH_KEY = 'recent-search-key'
 export const RECENT_SEARCH_MIN_LENGTH = 3
 
 // Constants for product list page
-export const PRODUCT_LIST_IMAGE_VIEW_TYPE = 'large'
+export const PRODUCT_LIST_IMAGE_VIEW_TYPE = 'medium'
 export const PRODUCT_LIST_SELECTABLE_ATTRIBUTE_ID = 'color'
 
 // Constants for product tile page
-export const PRODUCT_TILE_IMAGE_VIEW_TYPE = 'large'
+export const PRODUCT_TILE_IMAGE_VIEW_TYPE = 'medium'
 export const PRODUCT_TILE_SELECTABLE_ATTRIBUTE_ID = 'color'
 
 // Constants for the Homepage's Shop Products section.
