@@ -1,5 +1,6 @@
 ## v7.0.0-dev.0 (May 20, 2025)
 
+- Introduce new prop for passing in Commerce SDK API config to commerce-sdk-react [#2496](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2496)
 - Improved the layout of product tiles in product scroll and product list [#2446](https://github.com/SalesforceCommerceCloud/pwa-kit/pull/2446)
 
 ## v6.1.0 (May 22, 2025)
