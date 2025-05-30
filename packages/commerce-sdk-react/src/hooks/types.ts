@@ -69,6 +69,45 @@ export type NullToOptional<T> = Omit<T, NullKeys<T>> & {
 }
 
 // --- API CLIENTS --- //
+export type SdkConstructorType = 
+  | typeof ShopperBaskets
+  | typeof ShopperContexts
+  | typeof ShopperCustomers
+  | typeof ShopperExperience
+  | typeof ShopperGiftCertificates
+  | typeof ShopperLogin
+  | typeof ShopperOrders
+  | typeof ShopperProducts
+  | typeof ShopperPromotions
+  | typeof ShopperSearch
+  | typeof ShopperSeo
+  | typeof ShopperStores
+
+/**
+ * Configuration for individual API clients
+ */
+export interface ApiConfig<T extends SdkConstructorType = SdkConstructorType> {
+    sdkClass: T;
+    config?: Record<string, any>;
+}
+
+/**
+ * Standard configuration for all Shopper APIs
+ */
+export type ShopperApiConfigs = {
+    shopperBaskets?: ApiConfig<typeof ShopperBaskets>;
+    shopperContexts?: ApiConfig<typeof ShopperContexts>;
+    shopperCustomers?: ApiConfig<typeof ShopperCustomers>;
+    shopperExperience?: ApiConfig<typeof ShopperExperience>;
+    shopperGiftCertificates?: ApiConfig<typeof ShopperGiftCertificates>;
+    shopperLogin?: ApiConfig<typeof ShopperLogin>;
+    shopperOrders?: ApiConfig<typeof ShopperOrders>;
+    shopperProducts?: ApiConfig<typeof ShopperProducts>;
+    shopperPromotions?: ApiConfig<typeof ShopperPromotions>;
+    shopperSearch?: ApiConfig<typeof ShopperSearch>;
+    shopperSeo?: ApiConfig<typeof ShopperSeo>;
+    shopperStores?: ApiConfig<typeof ShopperStores>;
+};
 
 export type ApiClientConfigParams = {
     clientId: string

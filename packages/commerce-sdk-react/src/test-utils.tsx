@@ -32,7 +32,8 @@ export const DEFAULT_TEST_CONFIG = {
     siteId: 'RefArchGlobal',
     locale: 'en-US',
     currency: 'USD',
-    fetchedToken: 'test-token'
+    fetchedToken: 'test-token',
+    apiConfigs: {}
 }
 
 export const createQueryClient = () => {

@@ -5,30 +5,12 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import React, {ReactElement, useEffect, useMemo} from 'react'
-import {
-    ShopperBaskets,
-    ShopperContexts,
-    ShopperCustomers,
-    ShopperExperience,
-    ShopperLogin,
-    ShopperOrders,
-    ShopperProducts,
-    ShopperPromotions,
-    ShopperGiftCertificates,
-    ShopperSearch,
-    ShopperSeo,
-    ShopperBasketsTypes,
-    ShopperStores
-} from 'commerce-sdk-isomorphic'
+import {ShopperBasketsTypes} from 'commerce-sdk-isomorphic'
 import Auth from './auth'
-import {ApiClientConfigParams, ApiClients} from './hooks/types'
+import {ApiClientConfigParams, ApiClients, ShopperApiConfigs} from './hooks/types'
 import {Logger} from './types'
-import {
-    DWSID_COOKIE_NAME,
-    MOBIFY_PATH,
-    SERVER_AFFINITY_HEADER_KEY,
-    SLAS_PRIVATE_PROXY_PATH
-} from './constant'
+import {DWSID_COOKIE_NAME, SERVER_AFFINITY_HEADER_KEY} from './constant'
+
 export interface CommerceApiProviderProps extends ApiClientConfigParams {
     children: React.ReactNode
     proxy: string
@@ -46,6 +28,7 @@ export interface CommerceApiProviderProps extends ApiClientConfigParams {
     passwordlessLoginCallbackURI?: string
     refreshTokenRegisteredCookieTTL?: number
     refreshTokenGuestCookieTTL?: number
+    apiConfigs: ShopperApiConfigs
 }
 
 /**
@@ -126,7 +109,8 @@ const CommerceApiProvider = (props: CommerceApiProviderProps): ReactElement => {
         defaultDnt,
         passwordlessLoginCallbackURI,
         refreshTokenRegisteredCookieTTL,
-        refreshTokenGuestCookieTTL
+        refreshTokenGuestCookieTTL,
+        apiConfigs
     } = props
 
     // Set the logger based on provided configuration, or default to the console object if no logger is provided
@@ -194,27 +178,24 @@ const CommerceApiProvider = (props: CommerceApiProviderProps): ReactElement => {
         fetchOptions
     }
 
-    const baseUrl = config.proxy.split(MOBIFY_PATH)[0]
-    const privateClientEndpoint = `${baseUrl}${SLAS_PRIVATE_PROXY_PATH}`
-
     const apiClients = useMemo(() => {
-        return {
-            shopperBaskets: new ShopperBaskets(config),
-            shopperContexts: new ShopperContexts(config),
-            shopperCustomers: new ShopperCustomers(config),
-            shopperExperience: new ShopperExperience(config),
-            shopperGiftCertificates: new ShopperGiftCertificates(config),
-            shopperLogin: new ShopperLogin({
-                ...config,
-                proxy: enablePWAKitPrivateClient ? privateClientEndpoint : config.proxy
-            }),
-            shopperOrders: new ShopperOrders(config),
-            shopperProducts: new ShopperProducts(config),
-            shopperPromotions: new ShopperPromotions(config),
-            shopperSearch: new ShopperSearch(config),
-            shopperSeo: new ShopperSeo(config),
-            shopperStores: new ShopperStores(config)
+        const clients: Record<string, any> = {}
+
+        // Handle undefined/null apiConfigs
+        if (!apiConfigs) {
+            return clients as ApiClients
         }
+
+        Object.entries(apiConfigs).forEach(([key, apiConfig]) => {
+            const SdkClass = apiConfig.sdkClass
+            const clientConfig = {
+                ...config,
+                ...(apiConfig.config || {})
+            }
+            clients[key] = new (SdkClass as any)(clientConfig)
+        })
+
+        return clients as ApiClients
     }, [
         clientId,
         organizationId,
@@ -224,7 +205,8 @@ const CommerceApiProvider = (props: CommerceApiProviderProps): ReactElement => {
         fetchOptions,
         locale,
         currency,
-        headers?.['correlation-id']
+        headers?.['correlation-id'],
+        apiConfigs
     ])
 
     // Initialize the session
@@ -248,7 +230,8 @@ const CommerceApiProvider = (props: CommerceApiProviderProps): ReactElement => {
                 defaultDnt,
                 passwordlessLoginCallbackURI,
                 refreshTokenRegisteredCookieTTL,
-                refreshTokenGuestCookieTTL
+                refreshTokenGuestCookieTTL,
+                apiConfigs
             }}
         >
             <CommerceApiContext.Provider value={apiClients}>

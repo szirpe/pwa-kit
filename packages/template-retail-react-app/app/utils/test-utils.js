@@ -26,6 +26,22 @@ import {createUrlTemplate} from '@salesforce/retail-react-app/app/utils/url'
 import {getSiteByReference} from '@salesforce/retail-react-app/app/utils/site-utils'
 import jwt from 'jsonwebtoken'
 import userEvent from '@testing-library/user-event'
+
+// Add this import at the top of the file
+import {
+    ShopperBaskets,
+    ShopperContexts,
+    ShopperCustomers,
+    ShopperExperience,
+    ShopperLogin,
+    ShopperOrders,
+    ShopperProducts,
+    ShopperPromotions,
+    ShopperGiftCertificates,
+    ShopperSearch,
+    ShopperSeo,
+    ShopperStores
+} from 'commerce-sdk-isomorphic'
 // This JWT's payload is special
 // it includes 3 fields that commerce-sdk-react cares:
 // exp, isb and sub
@@ -87,6 +103,22 @@ export const renderWithReactIntl = (node, locale = DEFAULT_LOCALE) => {
 
 export const renderWithRouter = (node) => renderWithReactIntl(<Router>{node}</Router>)
 
+// Add this constant after your other exports (around line 80)
+export const DEFAULT_API_CONFIGS = {
+    shopperBaskets: { sdkClass: ShopperBaskets },
+    shopperContexts: { sdkClass: ShopperContexts },
+    shopperCustomers: { sdkClass: ShopperCustomers },
+    shopperExperience: { sdkClass: ShopperExperience },
+    shopperGiftCertificates: { sdkClass: ShopperGiftCertificates },
+    shopperLogin: { sdkClass: ShopperLogin },
+    shopperOrders: { sdkClass: ShopperOrders },
+    shopperProducts: { sdkClass: ShopperProducts },
+    shopperPromotions: { sdkClass: ShopperPromotions },
+    shopperSearch: { sdkClass: ShopperSearch },
+    shopperSeo: { sdkClass: ShopperSeo },
+    shopperStores: { sdkClass: ShopperStores }
+}
+
 /**
  * This is the Providers used to wrap components
  * for testing purposes.
@@ -99,7 +131,8 @@ export const TestProviders = ({
     appConfig = mockConfig.app,
     siteAlias = DEFAULT_SITE,
     isGuest = false,
-    bypassAuth = true
+    bypassAuth = true,
+    apiConfigs = DEFAULT_API_CONFIGS
 }) => {
     const mounted = useRef()
     // We use this to track mounted state.
@@ -133,6 +166,7 @@ export const TestProviders = ({
                         proxy={`${window.location.origin}/${commerceApiConfig.proxyPath}`}
                         redirectURI={`${window.location.origin}/testcallback`}
                         fetchedToken={bypassAuth ? (isGuest ? guestToken : registerUserToken) : ''}
+                        apiConfigs={apiConfigs}
                     >
                         <CurrencyProvider currency={DEFAULT_CURRENCY}>
                             <Router>
@@ -158,7 +192,8 @@ TestProviders.propTypes = {
     appConfig: PropTypes.object,
     siteAlias: PropTypes.string,
     bypassAuth: PropTypes.bool,
-    isGuest: PropTypes.bool
+    isGuest: PropTypes.bool,
+    apiConfigs: PropTypes.object
 }
 
 /**

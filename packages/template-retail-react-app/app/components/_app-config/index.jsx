@@ -36,6 +36,23 @@ import {withReactQuery} from '@salesforce/pwa-kit-react-sdk/ssr/universal/compon
 import {useCorrelationId} from '@salesforce/pwa-kit-react-sdk/ssr/universal/hooks'
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
 import {DEFAULT_DNT_STATE} from '@salesforce/retail-react-app/app/constants'
+
+import {MOBIFY_PATH, SLAS_PRIVATE_PROXY_PATH} from '@salesforce/commerce-sdk-react/constant'
+
+import {
+    ShopperBaskets,
+    ShopperContexts,
+    ShopperCustomers,
+    ShopperExperience,
+    ShopperLogin,
+    ShopperOrders,
+    ShopperProducts,
+    ShopperPromotions,
+    ShopperGiftCertificates,
+    ShopperSearch,
+    ShopperSeo,
+    ShopperStores
+} from 'commerce-sdk-isomorphic'
 /**
  * Use the AppConfig component to inject extra arguments into the getProps
  * methods for all Route Components in the app – typically you'd want to do this
@@ -56,6 +73,53 @@ const AppConfig = ({children, locals = {}}) => {
 
     const passwordlessCallback = locals.appConfig.login?.passwordless?.callbackURI
 
+    const proxy = `${appOrigin}${commerceApiConfig.proxyPath}`
+
+    const baseUrl = proxy.split(MOBIFY_PATH)[0]
+    const privateClientEndpoint = `${baseUrl}${SLAS_PRIVATE_PROXY_PATH}`
+
+    const apiConfigs = {
+        shopperBaskets: {
+            sdkClass: ShopperBaskets
+        },
+        shopperContexts: {
+            sdkClass: ShopperContexts
+        },
+        shopperCustomers: {
+            sdkClass: ShopperCustomers
+        },
+        shopperExperience: {
+            sdkClass: ShopperExperience
+        },
+        shopperGiftCertificates: {
+            sdkClass: ShopperGiftCertificates
+        },
+        shopperLogin: {
+            sdkClass: ShopperLogin,
+            config: {
+                proxy: commerceApiConfig.enablePWAKitPrivateClient ? privateClientEndpoint : proxy
+            }
+        },
+        shopperOrders: {
+            sdkClass: ShopperOrders
+        },
+        shopperProducts: {
+            sdkClass: ShopperProducts
+        },
+        shopperPromotions: {
+            sdkClass: ShopperPromotions
+        },
+        shopperSearch: {
+            sdkClass: ShopperSearch
+        },
+        shopperSeo: {
+            sdkClass: ShopperSeo
+        },
+        shopperStores: {
+            sdkClass: ShopperStores
+        }
+    }
+
     return (
         <CommerceApiProvider
             shortCode={commerceApiConfig.parameters.shortCode}
@@ -66,13 +130,11 @@ const AppConfig = ({children, locals = {}}) => {
             currency={locals.locale?.preferredCurrency}
             redirectURI={`${appOrigin}/callback`}
             passwordlessLoginCallbackURI={passwordlessCallback}
-            proxy={`${appOrigin}${commerceApiConfig.proxyPath}`}
+            proxy={proxy}
             headers={headers}
             defaultDnt={DEFAULT_DNT_STATE}
-            // Uncomment 'enablePWAKitPrivateClient' to use SLAS private client login flows.
-            // Make sure to also enable useSLASPrivateClient in ssr.js when enabling this setting.
-            // enablePWAKitPrivateClient={true}
             logger={createLogger({packageName: 'commerce-sdk-react'})}
+            apiConfigs={apiConfigs}
         >
             <MultiSiteProvider site={locals.site} locale={locals.locale} buildUrl={locals.buildUrl}>
                 <ChakraProvider theme={theme}>{children}</ChakraProvider>
