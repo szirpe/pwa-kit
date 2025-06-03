@@ -309,7 +309,6 @@ test('clicking a filter on search result will change url', async () => {
 })
 
 test('should filter out refinements in the disallow list', async () => {
-
     window.history.pushState({}, 'ProductList', '/uk/en-GB/category/mens-clothing-jackets')
     renderWithProviders(<MockedComponent />)
 
