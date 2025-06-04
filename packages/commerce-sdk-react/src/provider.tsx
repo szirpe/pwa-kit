@@ -36,7 +36,7 @@ export interface CommerceApiProviderProps extends ApiClientConfigParams {
 }
 
 export type ParameterFilter<T> = (params: T, methodName: string) => Partial<T>
-export type ParameterTransformer<T> = (params: T, methodName: string, options: any) => any
+export type ParameterTransformer<T> = (params: T, methodName: string, options: any) => any | Promise<any>
 export type BeforeCallCallback<TParams> = (
     methodName: string,
     params: TParams,
@@ -73,7 +73,7 @@ export const withParameterInjection = <T extends Record<string, Function>>(
             return async function (options: any = {}) {
                 try {
                     if (transformer) {
-                        options = transformer(params, methodName, options)
+                        options = await Promise.resolve(transformer(params, methodName, options))
                     }
 
                     onBeforeCall?.(methodName, params, options)
@@ -234,7 +234,10 @@ const CommerceApiProvider = (props: CommerceApiProviderProps): ReactElement => {
                 ...serverAffinityHeader
             },
             throwOnBadResponse: true,
-            fetchOptions
+            fetchOptions: {
+                ...options.fetchOptions,
+                ...fetchOptions
+            }
         }
     }
 

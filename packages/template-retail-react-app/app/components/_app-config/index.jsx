@@ -132,12 +132,12 @@ const AppConfig = ({children, locals = {}}) => {
 
     return (
         <CommerceApiProvider
-            shortCode={commerceApiConfig.parameters.shortCode}
-            clientId={commerceApiConfig.parameters.clientId}
-            organizationId={commerceApiConfig.parameters.organizationId}
-            siteId={locals.site?.id}
-            locale={locals.locale?.id}
-            currency={locals.locale?.preferredCurrency}
+            shortCode={shortCode}
+            clientId={clientId}
+            organizationId={organizationId}
+            siteId={siteId}
+            locale={locale}
+            currency={currency}
             redirectURI={`${appOrigin}/callback`}
             passwordlessLoginCallbackURI={passwordlessCallback}
             proxy={proxy}
