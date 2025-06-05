@@ -40,6 +40,7 @@
     "version": "node ./scripts/version.js"
   },
   "dependencies": {
+    "commerce-sdk-isomorphic": "^3.3.0",
     "js-cookie": "^3.0.1",
     "jwt-decode": "^4.0.0"
   },
@@ -58,7 +59,6 @@
     "@types/react-dom": "~18.2.1",
     "@types/react-helmet": "~6.1.6",
     "@types/react-router-dom": "~5.3.3",
-    "commerce-sdk-isomorphic": "^3.3.0",
     "cross-env": "^5.2.1",
     "internal-lib-build": "3.11.0-dev.0",
     "jsonwebtoken": "^9.0.0",
