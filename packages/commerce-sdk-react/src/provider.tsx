@@ -228,7 +228,7 @@ const CommerceApiProvider = (props: CommerceApiProviderProps): ReactElement => {
 
             return clients as ApiClients
         }
-
+asd
         const config = {
             proxy,
             headers: {
