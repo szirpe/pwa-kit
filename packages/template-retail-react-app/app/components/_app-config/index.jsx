@@ -42,6 +42,7 @@ import {
     STORE_LOCATOR_DEFAULT_COUNTRY,
     STORE_LOCATOR_DEFAULT_COUNTRY_CODE,
     STORE_LOCATOR_DEFAULT_POSTAL_CODE,
+    STORE_LOCATOR_DEFAULT_PAGE_SIZE,
     STORE_LOCATOR_SUPPORTED_COUNTRIES
 } from '@salesforce/retail-react-app/app/constants'
 import {StoreLocatorProvider} from '@salesforce/retail-react-app/app/components/store-locator'
@@ -66,7 +67,6 @@ const AppConfig = ({children, locals = {}}) => {
     const passwordlessCallback = locals.appConfig.login?.passwordless?.callbackURI
 
     const storeLocatorConfig = {
-        path: STORE_LOCATOR_PATH,
         radius: STORE_LOCATOR_RADIUS,
         radiusUnit: STORE_LOCATOR_RADIUS_UNIT,
         defaultCountry: STORE_LOCATOR_DEFAULT_COUNTRY,

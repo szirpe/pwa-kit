@@ -22,7 +22,8 @@ import {useGeolocation} from './use-geo-location'
 
 export const StoreLocatorForm: React.FC = () => {
     const {config, formValues, setFormValues, setDeviceCoordinates} = useStoreLocator()
-
+    console.log('config', config)
+    console.log('formValues', formValues)
     const {coordinates, error, refresh} = useGeolocation()
     const form = useForm<FormValues>({
         mode: 'onChange',

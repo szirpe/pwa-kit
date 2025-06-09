@@ -5,9 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import Main from './main'
-export default Main
-
-export {useStoreLocator} from './use-store-locator'
-export {StoreLocatorProvider} from './provider'
+export {StoreLocator} from './main'
 export {StoreLocatorModal} from './modal'
+export {StoreLocatorProvider} from './provider'
+export {useStoreLocator} from './use-store-locator'

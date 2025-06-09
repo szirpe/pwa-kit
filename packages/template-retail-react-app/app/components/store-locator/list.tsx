@@ -7,7 +7,7 @@
 
 import React, {useEffect, useState} from 'react'
 import {Accordion, AccordionItem, Box, Button} from '@chakra-ui/react'
-import {StoreLocatorListItem} from 'overridable!./list-item'
+import {StoreLocatorListItem} from './list-item'
 import {useStoreLocator} from './use-store-locator'
 import {Stores, Store} from '../types/store'
 
