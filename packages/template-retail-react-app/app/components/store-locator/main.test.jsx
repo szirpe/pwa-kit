@@ -7,7 +7,7 @@
 
 import React from 'react'
 import {render, screen} from '@testing-library/react'
-import StoreLocator from './index'
+import {StoreLocator} from './main'
 
 jest.mock('./list', () => ({
     StoreLocatorList: () => <div data-testid="store-locator-list">Store List Mock</div>

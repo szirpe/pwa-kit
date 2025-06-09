@@ -5,18 +5,9 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import React from 'react'
+import Main from './main'
+export default Main
 
-import {StoreLocatorList} from './list'
-import {StoreLocatorForm} from './form'
-import {StoreLocatorHeading} from './heading'
-
-export default function StoreLocator(): JSX.Element {
-    return (
-        <>
-            <StoreLocatorHeading />
-            <StoreLocatorForm />
-            <StoreLocatorList />
-        </>
-    )
-}
+export {useStoreLocator} from './use-store-locator'
+export {StoreLocatorProvider} from './provider'
+export {StoreLocatorModal} from './modal'

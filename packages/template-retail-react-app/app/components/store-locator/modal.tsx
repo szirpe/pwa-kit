@@ -13,7 +13,7 @@ import {
     ModalContent,
     useBreakpointValue
 } from '@chakra-ui/react'
-import {StoreLocatorContent} from './content'
+import StoreLocator from './main'
 
 interface StoreLocatorModalProps {
     isOpen: boolean
@@ -38,7 +38,7 @@ export const StoreLocatorModal: React.FC<StoreLocatorModalProps> = ({isOpen, onC
             >
                 <ModalCloseButton onClick={onClose} />
                 <ModalBody pb={8} bg="white" paddingBottom={6} paddingTop={6}>
-                    <StoreLocatorContent />
+                    <StoreLocator />
                 </ModalBody>
             </ModalContent>
         </Modal>
@@ -47,7 +47,7 @@ export const StoreLocatorModal: React.FC<StoreLocatorModalProps> = ({isOpen, onC
             <ModalContent position="absolute" top="0" right="0" height="100vh" marginTop="0px">
                 <ModalCloseButton onClick={onClose} />
                 <ModalBody pb={8} bg="white" paddingBottom={6} marginTop={6}>
-                    <StoreLocatorContent />
+                    <StoreLocator />
                 </ModalBody>
             </ModalContent>
         </Modal>
