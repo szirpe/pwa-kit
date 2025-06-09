@@ -6,6 +6,7 @@
  */
 
 import React, {useEffect} from 'react'
+import {useIntl} from 'react-intl'
 import {
     Box,
     Button,
@@ -22,8 +23,7 @@ import {useGeolocation} from './use-geo-location'
 
 export const StoreLocatorForm: React.FC = () => {
     const {config, formValues, setFormValues, setDeviceCoordinates} = useStoreLocator()
-    console.log('config', config)
-    console.log('formValues', formValues)
+    const intl = useIntl()
     const {coordinates, error, refresh} = useGeolocation()
     const form = useForm<FormValues>({
         mode: 'onChange',
@@ -83,7 +83,7 @@ export const StoreLocatorForm: React.FC = () => {
                                             ({countryCode, countryName}) => {
                                                 return (
                                                     <option value={countryCode} key={countryCode}>
-                                                        {countryName}
+                                                        {intl.formatMessage(countryName)}
                                                     </option>
                                                 )
                                             }
