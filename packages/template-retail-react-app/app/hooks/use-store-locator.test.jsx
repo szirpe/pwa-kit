@@ -7,7 +7,7 @@
 import React from 'react'
 import {renderHook, act} from '@testing-library/react'
 import {useStoreLocator} from '@salesforce/retail-react-app/app/hooks/use-store-locator'
-import {StoreLocatorProvider} from '@salesforce/retail-react-app/app/components/store-locator/provider'
+import {StoreLocatorProvider} from '@salesforce/retail-react-app/app/contexts/store-locator-provider'
 import {useSearchStores} from '@salesforce/commerce-sdk-react'
 
 // Mock the commerce-sdk-react hook

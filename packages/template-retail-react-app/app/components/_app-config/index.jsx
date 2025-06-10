@@ -21,7 +21,7 @@ import {ChakraProvider} from '@salesforce/retail-react-app/app/components/shared
 import 'focus-visible/dist/focus-visible'
 
 import theme from '@salesforce/retail-react-app/app/theme'
-import {MultiSiteProvider} from '@salesforce/retail-react-app/app/contexts'
+import {MultiSiteProvider, StoreLocatorProvider} from '@salesforce/retail-react-app/app/contexts'
 import {useAppOrigin} from '@salesforce/retail-react-app/app/hooks/use-app-origin'
 import {
     resolveSiteFromUrl,
@@ -45,7 +45,7 @@ import {
     STORE_LOCATOR_DEFAULT_PAGE_SIZE,
     STORE_LOCATOR_SUPPORTED_COUNTRIES
 } from '@salesforce/retail-react-app/app/constants'
-import {StoreLocatorProvider} from '@salesforce/retail-react-app/app/components/store-locator'
+
 /**
  * Use the AppConfig component to inject extra arguments into the getProps
  * methods for all Route Components in the app – typically you'd want to do this
