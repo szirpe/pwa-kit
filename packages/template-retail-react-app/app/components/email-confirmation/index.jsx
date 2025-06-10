@@ -15,7 +15,6 @@ const PasswordlessEmailConfirmation = ({form, submitForm, email = ''}) => {
     const contentRef = useRef(null)
 
     useEffect(() => {
-        // Set focus to the content when component mounts
         if (contentRef.current) {
             contentRef.current.focus()
         }
