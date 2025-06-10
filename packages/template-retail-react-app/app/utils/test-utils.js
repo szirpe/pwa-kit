@@ -20,7 +20,11 @@ import {withReactQuery} from '@salesforce/pwa-kit-react-sdk/ssr/universal/compon
 import fallbackMessages from '@salesforce/retail-react-app/app/static/translations/compiled/en-GB.json'
 import mockConfig from '@salesforce/retail-react-app/config/mocks/default'
 // Contexts
-import {CurrencyProvider, MultiSiteProvider, StoreLocatorProvider} from '@salesforce/retail-react-app/app/contexts'
+import {
+    CurrencyProvider,
+    MultiSiteProvider,
+    StoreLocatorProvider
+} from '@salesforce/retail-react-app/app/contexts'
 
 import {createUrlTemplate} from '@salesforce/retail-react-app/app/utils/url'
 import {getSiteByReference} from '@salesforce/retail-react-app/app/utils/site-utils'

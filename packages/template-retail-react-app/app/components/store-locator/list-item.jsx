@@ -6,6 +6,7 @@
  */
 
 import React from 'react'
+import PropTypes from 'prop-types'
 import {AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Box} from '@chakra-ui/react'
 
 export const StoreLocatorListItem = ({store}) => {
@@ -55,4 +56,18 @@ export const StoreLocatorListItem = ({store}) => {
             </Box>
         </AccordionItem>
     )
+}
+
+StoreLocatorListItem.propTypes = {
+    store: PropTypes.shape({
+        name: PropTypes.string,
+        address1: PropTypes.string.isRequired,
+        city: PropTypes.string.isRequired,
+        stateCode: PropTypes.string,
+        postalCode: PropTypes.string.isRequired,
+        distance: PropTypes.number,
+        distanceUnit: PropTypes.string,
+        phone: PropTypes.string,
+        storeHours: PropTypes.string
+    }).isRequired
 }
