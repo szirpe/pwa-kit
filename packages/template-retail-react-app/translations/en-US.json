@@ -147,9 +147,6 @@
   "auth_modal.button.close.assistive_msg": {
     "defaultMessage": "Close login form"
   },
-  "auth_modal.check_email.announcement": {
-    "defaultMessage": "Check Your Email. We just sent a login link to {email}"
-  },
   "auth_modal.check_email.button.resend_link": {
     "defaultMessage": "Resend Link"
   },

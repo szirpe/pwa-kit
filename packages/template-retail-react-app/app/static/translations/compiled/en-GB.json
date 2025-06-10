@@ -361,16 +361,6 @@
       "value": "Close login form"
     }
   ],
-  "auth_modal.check_email.announcement": [
-    {
-      "type": 0,
-      "value": "Check Your Email. We just sent a login link to "
-    },
-    {
-      "type": 1,
-      "value": "email"
-    }
-  ],
   "auth_modal.check_email.button.resend_link": [
     {
       "type": 0,

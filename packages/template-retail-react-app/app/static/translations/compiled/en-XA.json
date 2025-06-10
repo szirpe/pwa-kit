@@ -753,24 +753,6 @@
       "value": "]"
     }
   ],
-  "auth_modal.check_email.announcement": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƈħḗḗƈķ Ẏǿǿŭŭř Ḗḿȧȧīŀ. Ẇḗḗ ĵŭŭşŧ şḗḗƞŧ ȧȧ ŀǿǿɠīƞ ŀīƞķ ŧǿǿ "
-    },
-    {
-      "type": 1,
-      "value": "email"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
   "auth_modal.check_email.button.resend_link": [
     {
       "type": 0,
