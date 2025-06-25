@@ -15,6 +15,7 @@ import fs from 'fs/promises'
 import path from 'path'
 import {fileURLToPath} from 'url'
 import {DeveloperGuidelinesTool} from '../utils/pwa-developer-guideline-tool.js'
+import {TestWithPlaywrightTool} from '../utils/test-with-playwright.js'
 
 class PwaStorefrontMCPServerHighLevel {
     constructor() {
@@ -34,6 +35,7 @@ class PwaStorefrontMCPServerHighLevel {
         this.addComponentTool = new AddComponentTool()
         this.insertExistingComponentTool = new InsertExistingComponentTool()
         this.CreateNewComponentTool = new CreateNewComponentTool()
+        this.testWithPlaywrightTool = new TestWithPlaywrightTool()
         this.setupTools()
     }
 
@@ -189,6 +191,18 @@ class PwaStorefrontMCPServerHighLevel {
                         isError: true
                     }
                 }
+            }
+        )
+
+        this.server.tool(
+            'run_site_test',
+            'Run site performance or accessibility test for a given site URL (e.g. https://www.adidas.com/us)',
+            {
+                testType: z.enum(['performance', 'accessibility']).describe('Type of test to run'),
+                siteUrl: z.string().optional().describe('Site URL to test (optional)')
+            },
+            async ({testType, siteUrl}) => {
+                return await this.testWithPlaywrightTool.run(testType, siteUrl)
             }
         )
 
