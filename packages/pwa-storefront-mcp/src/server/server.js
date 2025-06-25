@@ -15,7 +15,7 @@ import fs from 'fs/promises'
 import path from 'path'
 import {fileURLToPath} from 'url'
 import {DeveloperGuidelinesTool} from '../utils/pwa-developer-guideline-tool.js'
-import {TestWithPlaywrightTool} from '../utils/test-with-playwright.js'
+import {TestWithPlaywrightTool} from '../utils/run-site-test-tool.js'
 
 class PwaStorefrontMCPServerHighLevel {
     constructor() {
@@ -201,9 +201,7 @@ class PwaStorefrontMCPServerHighLevel {
                 testType: z.enum(['performance', 'accessibility']).describe('Type of test to run'),
                 siteUrl: z.string().optional().describe('Site URL to test (optional)')
             },
-            async ({testType, siteUrl}) => {
-                return await this.testWithPlaywrightTool.run(testType, siteUrl)
-            }
+            ({testType, siteUrl}) => this.testWithPlaywrightTool.run(testType, siteUrl)
         )
 
         this.server.resource(
