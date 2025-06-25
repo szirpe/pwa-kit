@@ -41,106 +41,6 @@ export class CreateNewComponentTool {
     }
 
     /**
-     * Starts the component creation process by asking for the component name
-     * @returns {string} The first question to ask the developer
-     */
-    startComponentCreation() {
-        this.currentStep = 1
-        return 'What would you like to name the new React component?'
-    }
-
-    /**
-     * Processes the component name, detects the project root, and asks for confirmation
-     * @param {string} componentName - The name provided by the developer
-     * @returns {Promise<string>} The next question to ask
-     */
-    async processComponentName(componentName) {
-        this.componentData.name = componentName
-        // Detect project root
-        const projectRoot = await this.detectProjectRoot()
-        this.componentData.detectedProjectRoot = projectRoot
-        this.currentStep = 2
-        return `Detected project root directory: ${projectRoot}\nIs this correct? (yes/no)`
-    }
-
-    /**
-     * Processes the project root confirmation and asks for the location if not confirmed
-     * @param {string} answer - The user's confirmation (yes/no)
-     * @returns {string} The next question to ask
-     */
-    processProjectRootConfirmation(answer) {
-        // Always prompt for the full absolute path to the directory where the component should be created
-        this.currentStep = 2.5
-        return 'Please specify the full absolute path to the directory where the component should be created:'
-    }
-
-    /**
-     * Processes the custom location if the user did not confirm the detected root
-     * @param {string} location - The custom location provided by the developer
-     * @returns {string} The next question to ask
-     */
-    processCustomLocation(location) {
-        this.componentData.location = location
-        this.currentStep = 3
-        return 'Should I also create a test file for this component? (yes/no)'
-    }
-
-    /**
-     * Processes the test file decision and asks about custom code
-     * @param {string} answer - The developer's answer (yes/no)
-     * @returns {string} The next question to ask
-     */
-    processTestFileDecision(answer) {
-        this.componentData.createTestFile =
-            answer.toLowerCase() === 'yes' || answer.toLowerCase() === 'y'
-        this.currentStep = 4
-        return 'Do you want to provide custom code for the component, or should I use the default skeleton?'
-    }
-
-    /**
-     * Processes the custom code decision and asks about entity type
-     * @param {string} answer - The developer's answer about custom code
-     * @returns {string} The next question to ask
-     */
-    processCustomCodeDecision(answer) {
-        if (answer.toLowerCase() === 'yes' || answer.toLowerCase() === 'y') {
-            this.currentStep = 4.5 // Special step for custom code input
-            return 'Please provide the custom code for the component:'
-        } else {
-            this.componentData.customCode = null
-            this.currentStep = 5
-            return 'Is this component related to a specific entity (e.g., product, category, basket, customer), or should I infer it from the name?'
-        }
-    }
-
-    /**
-     * Processes the custom code input and asks about entity type
-     * @param {string} customCode - The custom code provided by the developer
-     * @returns {string} The next question to ask
-     */
-    processCustomCode(customCode) {
-        this.componentData.customCode = customCode
-        this.currentStep = 5
-        return 'Is this component related to a specific entity (e.g., product, category, basket, customer), or should I infer it from the name?'
-    }
-
-    /**
-     * Processes the entity type decision and creates the component
-     * @param {string} answer - The developer's answer about entity type
-     * @returns {Promise<string>} The result of component creation
-     */
-    async processEntityTypeDecision(answer) {
-        if (answer.toLowerCase() === 'infer' || answer.toLowerCase() === 'auto') {
-            this.componentData.entityType = inferEntityFromComponentName(this.componentData.name)
-        } else {
-            this.componentData.entityType = answer.toLowerCase()
-        }
-
-        this.currentStep = 6
-        return await this.createComponent()
-    }
-
-    /**
      * Creates the component based on all collected data
      * @returns {Promise<string>} The result of component creation
      */
@@ -221,14 +121,6 @@ export class CreateNewComponentTool {
     }
 
     /**
-     * Gets the current step number
-     * @returns {number} The current step
-     */
-    getCurrentStep() {
-        return this.currentStep
-    }
-
-    /**
      * Creates a new React component file.
      * @param {string} componentName - Name for the new component.
      * @param {string} projectDir - The absolute path to the project directory for the new component.
@@ -257,7 +149,7 @@ export default ${componentName};
             await fs.writeFile(componentFilePath, codeToWrite, 'utf-8')
             return `✅ Created ${componentFilePath}`
         } catch (err) {
-            console.error('Error during file creation:', err);
+            console.error('Error during file creation:', err)
             return `❌ Error creating component file at ${componentDir}: ${err.message}`
         }
     }
@@ -288,97 +180,9 @@ describe('${componentName}', () => {
             await fs.writeFile(testFilePath, testCode, 'utf-8')
             return `✅ Created ${testFilePath}`
         } catch (err) {
-            console.error('Error during test file creation:', err);
+            console.error('Error during test file creation:', err)
             return `❌ Error creating test file at ${componentDir}: ${err.message}`
         }
-    }
-
-    /**
-     * Legacy method for backward compatibility - creates a new React component and optionally a test file, then recommends hooks.
-     * @param {string} componentName - Name for the new component.
-     * @param {string} projectDir - The absolute path to the project directory for the new component.
-     * @param {boolean} createTestFile - Whether to create a test file.
-     * @param {string} [componentCode] - Code of the component to create.
-     * @param {string} [entity] - The entity type for hook recommendations (e.g., product, category, basket, customer).
-     */
-    async createNewComponent(componentName, projectDir, createTestFile, componentCode, entity) {
-        const messages = []
-        const componentMessage = await this.createComponentFile(
-            componentName,
-            projectDir,
-            componentCode
-        )
-        messages.push(componentMessage)
-
-        if (createTestFile) {
-            const testMessage = await this.createTestFile(componentName, projectDir)
-            messages.push(testMessage)
-        }
-
-        // Infer entity if not provided
-        let usedEntity = entity
-        if (!usedEntity) {
-            usedEntity = inferEntityFromComponentName(componentName)
-            if (usedEntity) {
-                messages.push(
-                    `\nℹ️ Entity type '${usedEntity}' was inferred from component name '${componentName}'.`
-                )
-            } else {
-                messages.push(
-                    `\nℹ️ No entity could be inferred from component name '${componentName}'.`
-                )
-            }
-        }
-
-        // Recommend hooks if entity is available
-        if (usedEntity) {
-            const recommender = new HookRecommenderTool()
-            const recommendations = recommender.getRecommendations(usedEntity)
-            if (Array.isArray(recommendations)) {
-                messages.push(`\n🔗 Recommended hooks for entity '${usedEntity}':`)
-                recommendations.forEach((hook) => {
-                    messages.push(`- ${hook.name}: ${hook.description} (from ${hook.package})`)
-                })
-            } else if (recommendations.error) {
-                messages.push(`\n${recommendations.error}`)
-            }
-        } else {
-            messages.push('\nℹ️ No entity provided or inferred for hook recommendations.')
-        }
-
-        // Always append lint reminder
-        messages.push(
-            "\n💡 After creating or modifying a component, run 'npm run lint -- --fix' to automatically fix formatting and linter issues."
-        )
-
-        return messages.join('\n')
-    }
-
-    /**
-     * Creates a component from a schema-driven answers object
-     * @param {object} answers - The answers object with keys matching the schema
-     * @returns {Promise<string>} The result of component creation
-     */
-    async createComponentFromAnswers(answers) {
-        // Map schema-driven answers to internal fields
-        this.componentData.name = answers.componentName || null
-        this.componentData.location = answers.location || null
-        this.componentData.createTestFile =
-            typeof answers.createTestFile === 'string'
-                ? ['yes', 'y', 'true', '1'].includes(answers.createTestFile.toLowerCase())
-                : !!answers.createTestFile
-        this.componentData.customCode = answers.customCode || null
-        this.componentData.entityType = answers.entityType || null
-        // If entityType is 'infer' or not provided, infer from name
-        if (
-            !this.componentData.entityType ||
-            this.componentData.entityType === 'infer' ||
-            this.componentData.entityType === 'auto'
-        ) {
-            this.componentData.entityType = inferEntityFromComponentName(this.componentData.name)
-        }
-        const message = await this.createComponent()
-        return {message}
     }
 
     /**
