@@ -203,45 +203,48 @@ describe('${componentName}', () => {
             // If options.list is true, generate a list-of-products component
             if (options.list) {
                 code = `${getCopyrightHeader()}
-import React from 'react';
-import PropTypes from 'prop-types';
-
-const ${componentName} = ({ products }) => (
-    <div>
-        {products.map(product => (
-            <div key={product.productId} style={{ border: '1px solid #ccc', margin: 8, padding: 8 }}>
-                <h2>{product.name}</h2>
-                {product.imageGroups && product.imageGroups[0]?.images[0]?.link && (
-                    <img
-                        src={product.imageGroups[0].images[0].link}
-                        alt={product.name}
-                        style={{ maxWidth: 150, marginBottom: 8 }}
-                    />
-                )}
-                <div>assigned_categories: {product.assigned_categories?.toString?.() ?? ''}</div>
-                <div>price: {product.price?.toString?.() ?? ''}</div>
-            </div>
-        ))}
-    </div>
-);
-
-${componentName}.propTypes = {
-    products: PropTypes.arrayOf(PropTypes.shape({
-        productId: PropTypes.string,
-        name: PropTypes.string,
-        assigned_categories: PropTypes.any,
-        price: PropTypes.any,
-        imageGroups: PropTypes.array
-    })).isRequired
-};
-
-export default ${componentName};
-`
+    import React from 'react';
+    import PropTypes from 'prop-types';
+    import { Box, Text, Image, Stack } from '@chakra-ui/react';
+    
+    const ${componentName} = ({ products }) => (
+        <Stack spacing={4}>
+            {products.map(product => (
+                <Box key={product.productId} borderWidth="1px" borderRadius="md" p={4}>
+                    <Text fontSize="xl" fontWeight="bold">{product.name}</Text>
+                    {product.imageGroups && product.imageGroups[0]?.images[0]?.link && (
+                        <Image
+                            src={product.imageGroups[0].images[0].link}
+                            alt={product.name}
+                            maxW="150px"
+                            mb={2}
+                        />
+                    )}
+                    <Text>assigned_categories: {product.assigned_categories?.toString?.() ?? ''}</Text>
+                    <Text>price: {product.price?.toString?.() ?? ''}</Text>
+                </Box>
+            ))}
+        </Stack>
+    );
+    
+    ${componentName}.propTypes = {
+        products: PropTypes.arrayOf(PropTypes.shape({
+            productId: PropTypes.string,
+            name: PropTypes.string,
+            assigned_categories: PropTypes.any,
+            price: PropTypes.any,
+            imageGroups: PropTypes.array
+        })).isRequired
+    };
+    
+    export default ${componentName};
+    `
             } else {
                 // Single product component (with selectors, image, etc.)
                 code = `${getCopyrightHeader()}
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Box, Text, Image, Button, HStack, Stack } from '@chakra-ui/react';
 
 // Helper to filter variants by selected attribute values
 const filterVariants = (variants, selected) => {
@@ -284,6 +287,17 @@ const ${componentName} = ({ product }) => {
         return initial;
     });
 
+    // Build a color code to swatch image URL map
+    const swatchMap = {};
+    imageGroups
+        .filter(group => group.viewType === 'swatch')
+        .forEach(group => {
+            const colorCode = group.variationAttributes?.[0]?.values?.[0]?.value;
+            if (colorCode && group.images[0]?.link) {
+                swatchMap[colorCode] = group.images[0].link;
+            }
+        });
+
     const filteredVariants = filterVariants(variants, selected);
     const getAvailableValues = (attrId) => {
         const otherSelected = { ...selected };
@@ -299,36 +313,62 @@ const ${componentName} = ({ product }) => {
     const imageUrl = getImageForSelection(imageGroups, selected);
 
     return (
-        <div>
-            <h2>{product.name}</h2>
+        <Box>
+            <Text fontSize="2xl" fontWeight="bold" mb={2}>{product.name}</Text>
             {imageUrl && (
-                <img src={imageUrl} alt={product.name} style={{ maxWidth: 300, marginBottom: 16 }} />
+                <Image src={imageUrl} alt={product.name} maxW="300px" mb={4} />
             )}
-            <div>assigned_categories: {product.assigned_categories?.toString?.() ?? ''}</div>
-            <div>price: {product.price?.toString?.() ?? ''}</div>
+            <Text>assigned_categories: {product.assigned_categories?.toString?.() ?? ''}</Text>
+            <Text>price: {product.price?.toString?.() ?? ''}</Text>
             {/* Dynamic variant attribute selectors */}
             {variationAttributes.map(attr => (
-                <div key={attr.id} style={{ margin: '8px 0' }}>
-                    <strong>{attr.name}:</strong>
-                    {getAvailableValues(attr.id).map(val => (
-                        <button
-                            key={val}
-                            onClick={() => setSelected(sel => ({ ...sel, [attr.id]: val }))}
-                            style={{
-                                margin: 4,
-                                border: selected[attr.id] === val ? '2px solid blue' : '1px solid #ccc',
-                                borderRadius: '4px',
-                                padding: '4px 12px',
-                                background: '#fff',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            {val}
-                        </button>
-                    ))}
-                </div>
+                <Box key={attr.id} my={2}>
+                    <Text as="span" fontWeight="semibold">{attr.name}:</Text>
+                    <HStack spacing={2} mt={1}>
+                        {getAvailableValues(attr.id).map(val =>
+                            attr.id === 'color' ? (
+                                <Button
+                                    key={val}
+                                    onClick={() => setSelected(sel => ({ ...sel, [attr.id]: val }))}
+                                    variant={selected[attr.id] === val ? 'solid' : 'outline'}
+                                    borderRadius="full"
+                                    minW="32px"
+                                    h="32px"
+                                    p={0}
+                                    borderColor={
+                                        selected[attr.id] === val ? 'blue.500' : 'gray.200'
+                                    }
+                                    _hover={{opacity: 0.8}}
+                                    aria-label={val}
+                                >
+                                    {swatchMap[val] ? (
+                                        <Image
+                                            src={swatchMap[val]}
+                                            alt={val}
+                                            borderRadius="full"
+                                            boxSize="28px"
+                                        />
+                                    ) : (
+                                        val
+                                    )}
+                                </Button>
+                            ) : (
+                                <Button
+                                    key={val}
+                                    onClick={() => setSelected(sel => ({ ...sel, [attr.id]: val }))}
+                                    variant={selected[attr.id] === val ? 'solid' : 'outline'}
+                                    colorScheme={selected[attr.id] === val ? 'blue' : 'gray'}
+                                    borderRadius="md"
+                                    size="sm"
+                                >
+                                    {val}
+                                </Button>
+                            )
+                        )}
+                    </HStack>
+                </Box>
             ))}
-        </div>
+        </Box>
     );
 };
 
@@ -349,8 +389,7 @@ export default ${componentName};
             await fs.writeFile(componentFilePath, code, 'utf-8')
             return `✅ Updated ${componentFilePath} to presentational component for ${entityType}`
         }
-        await fs.writeFile(componentFilePath, code, 'utf-8')
-        return `✅ Updated ${componentFilePath} to presentational component for ${entityType}`
+       
     }
 
     /**
