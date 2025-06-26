@@ -224,12 +224,12 @@ class PwaStorefrontMCPServerHighLevel {
                         if (answer) {
                             answers.name = answer;
                             session.step = 2;
-                            const defaultDir = process.env.PWA_STOREFRONT_PATH ? process.env.PWA_STOREFRONT_PATH + '/overrides/app/components' : 'overrides/app/components';
-                            return next(`Answer yes to use the default directory (${defaultDir}), or specify the full absolute path to use a different directory:`);
+                            const defaultDir = process.env.PWA_STOREFRONT_APP_PATH ? process.env.PWA_STOREFRONT_APP_PATH + '/components' : '/components';
+                            return next(`Answer yes to use the default components directory (${defaultDir}), or no if you want to specify the full absolute path to use a different directory:`);
                         }
                         return next('What would you like to name your new React component?');
                     case 2:
-                        const defaultDir = process.env.PWA_STOREFRONT_PATH ? process.env.PWA_STOREFRONT_PATH + '/overrides/app/components' : 'overrides/app/components';
+                        const defaultDir = process.env.PWA_STOREFRONT_APP_PATH ? process.env.PWA_STOREFRONT_APP_PATH + '/components' : '/components';
                         if (answer) {
                             // If user says yes/y/true/1, use defaultDir
                             if (/^(yes|y|true|1)$/i.test(answer)) {
@@ -237,125 +237,95 @@ class PwaStorefrontMCPServerHighLevel {
                             } else {
                                 answers.location = answer;
                             }
+                            // Always create the component here
+                            const tool = new CreateNewComponentTool();
+                            tool.componentData = {
+                                name: answers.name,
+                                location: answers.location,
+                                createTestFile: false,
+                                customCode: '',
+                                entityType: ''
+                            };
+                            session.basicComponentResult = await tool.createComponent();
                             session.step = 3;
-                            return next('Should I also create a test file for this component? (yes/no)');
-                        }
-                        return next(`Answer yes to use the default directory (${defaultDir}), or specify the full absolute path to use a different directory:`);
-                    case 3:
-                        if (answer) {
-                            answers.createTestFile = /^(yes|y|true|1)$/i.test(answer);
-                            session.step = 4;
-                            return next('Do you want to provide custom code for the component? (yes/no)');
-                        }
-                        return next('Should I also create a test file for this component? (yes/no)');
-                    case 4:
-                        if (answer) {
-                            if (/^(yes|y|true|1)$/i.test(answer)) {
-                                session.step = 4.5;
-                                return next('Please provide the custom code for the component:');
-                            } else {
-                                answers.customCode = '';
-                                session.step = 5;
-                                return next('Is this component related to a specific entity (e.g., product, category, basket, customer)? (optional, press enter to skip)');
-                            }
-                        }
-                        return next('Do you want to provide custom code for the component? (yes/no)');
-                    case 4.5:
-                        if (answer) {
-                            answers.customCode = answer;
-                            session.step = 5;
+                            // Skip test file prompt, go directly to entity type
                             return next('Is this component related to a specific entity (e.g., product, category, basket, customer)? (optional, press enter to skip)');
                         }
-                        return next('Please provide the custom code for the component:');
-                    case 5:
-                        if (answer) {
+                        return next(`Answer yes to use the default components directory (${defaultDir}), or no if you want to specify the full absolute path to use a different directory:`);
+                    case 3:
+                        if (answer !== undefined) {
                             answers.entityType = answer;
                         } else {
                             answers.entityType = '';
                         }
-                        // Call the simple tool with collected answers
+                        // Get recommended hooks for the entity
+                        const {HookRecommenderTool} = await import('../utils/HookRecommenderTool.js');
+                        const recommender = new HookRecommenderTool();
+                        const hooks = Array.isArray(recommender.getRecommendations(answers.entityType))
+                            ? recommender.getRecommendations(answers.entityType)
+                            : [];
+                        // Build options list
+                        session.hookOptions = hooks.map(h => h.name);
+                        session.hookDescriptions = hooks.map(h => h.description);
+                        session.hookOptions.push('schema');
+                        session.hookDescriptions.push('Use schema fields directly');
+                        session.hookOptions.push('none');
+                        session.hookDescriptions.push('None of the above (finish component creation now)');
+                        // Build prompt
+                        let prompt = 'Select data fetching details for this component:';
+                        session.hookOptions.forEach((opt, idx) => {
+                            prompt += `\n${idx + 1}. ${opt}`;
+                            if (session.hookDescriptions[idx]) {
+                                prompt += ` (${session.hookDescriptions[idx]})`;
+                            }
+                        });
+                        prompt += '\n\nReply with the number of your choice.';
+                        session.step = 4;
+                        return next(prompt);
+                    case 4:
+                        // Interpret user selection
+                        const selectedIdx = parseInt(answer, 10) - 1;
+                        const selectedOption = session.hookOptions && session.hookOptions[selectedIdx];
+                        if (!selectedOption) {
+                            return next('Invalid selection. Please reply with a valid number from the list.');
+                        }
+                        if (selectedOption === 'none') {
+                            session.step = 99;
+                            return done((session.basicComponentResult || '') + '\nComponent creation flow complete.');
+                        }
+                        // Now add presentational logic if needed
                         const tool = new CreateNewComponentTool();
                         tool.componentData = {
                             name: answers.name,
                             location: answers.location,
-                            createTestFile: answers.createTestFile !== false,
-                            customCode: answers.customCode || '',
+                            createTestFile: false, // already created
+                            customCode: '',
                             entityType: answers.entityType || ''
                         };
-                        const result = await tool.createComponent();
-                        let dataModelDetails = '';
+                        let result = session.basicComponentResult || '';
                         let dataModel = null;
-                        if (answers.entityType) {
-                            // Call getDataModelDocument for the entity
+                        if (selectedOption === 'schema') {
+                            // Use schema-based presentational logic
                             const uriHref = `data://data-models/${answers.entityType}`;
                             dataModel = await this.getDataModelDocument(answers.entityType, uriHref);
-                            if (dataModel && dataModel.contents && dataModel.contents[0] && dataModel.contents[0].text) {
-                                dataModelDetails = `\n\n📄 Data model for entity '${answers.entityType}':\n${dataModel.contents[0].text}`;
-                            } else {
-                                dataModelDetails = `\n\nℹ️ No data model found for entity '${answers.entityType}'.`;
-                            }
-                        }
-                        session.step = 6;
-                        session.dataModel = dataModel;
-                        return next((result + dataModelDetails +
-                            (answers.entityType && dataModel ?
-                                `\n\nWould you like to modify the generated component to present all fields from the '${answers.entityType}' data model? (yes/no)` :
-                                '\n\nComponent creation flow complete.')));
-                    case 6:
-                        if (answer && /^(yes|y|true|1)$/i.test(answer)) {
-                            // Generate presentational component code for all fields
-                            const dataModel = session.dataModel;
-                            let fields = [];
-                            try {
-                                const modelObj = dataModel && dataModel.contents && dataModel.contents[0] && JSON.parse(dataModel.contents[0].text);
-                                if (modelObj && modelObj.properties) {
-                                    fields = Object.keys(modelObj.properties);
-                                }
-                            } catch (e) {}
-                            const componentName = answers.name;
-                            // Generate simple HTML table for all fields
-                            const tableRows = fields.map(f => `            <tr><td>${f}</td><td>{props.${f} || ''}</td></tr>`).join('\n');
-                            const propTypesBlock = `\n${componentName}.propTypes = {\n${fields.map(f => `    ${f}: PropTypes.any,`).join('\n')}\n}\n`;
-                            const presentationalCode = `import React from 'react';\nimport PropTypes from 'prop-types';\n\nconst ${componentName} = (props) => (\n    <table border=\"1\">\n        <thead><tr><th>Field</th><th>Value</th></tr></thead>\n        <tbody>\n${tableRows}\n        </tbody>\n    </table>\n);\n${propTypesBlock}\nexport default ${componentName};\n`;
-                            // Write to component file using fs/promises and path
-                            const fsPromises = await import('fs/promises');
-                            const pathModule = await import('path');
-                            const componentDir = pathModule.join(answers.location, componentName);
-                            const componentFile = pathModule.join(componentDir, 'index.jsx');
-                            await fsPromises.mkdir(componentDir, {recursive: true});
-                            await fsPromises.writeFile(componentFile, presentationalCode, 'utf8');
-                            session.step = 7;
-                            return next('Would you like to update the test file with some mock data for this data model? (yes/no)');
+                            let schemaObj = dataModel && dataModel.contents && dataModel.contents[0] && JSON.parse(dataModel.contents[0].text);
+                            let presentationalResult = await tool.updateComponentToPresentational(
+                                answers.entityType,
+                                answers.name,
+                                answers.location,
+                                schemaObj && schemaObj.properties ? schemaObj.properties : {}
+                            );
+                            session.step = 99;
+                            session.dataModel = dataModel;
+                            return next(result + `\n\n${presentationalResult}\nComponent creation flow complete.`);
                         } else {
+                            // Use hook-based presentational logic
+                            const uriHref = `data://data-models/${answers.entityType}`;
+                            dataModel = await this.getDataModelDocument(answers.entityType, uriHref);
+                            let hookResult = await tool.handleHookSelection(selectedOption, answers.entityType, answers.name, answers.location, {[answers.entityType]: dataModel && dataModel.contents && dataModel.contents[0] && JSON.parse(dataModel.contents[0].text)});
                             session.step = 99;
-                            return done('Component creation flow complete.');
-                        }
-                    case 7:
-                        if (answer && /^(yes|y|true|1)$/i.test(answer)) {
-                            // Generate mock data for test file
-                            const dataModel = session.dataModel;
-                            let fields = [];
-                            try {
-                                const modelObj = dataModel && dataModel.contents && dataModel.contents[0] && JSON.parse(dataModel.contents[0].text);
-                                if (modelObj && modelObj.properties) {
-                                    fields = Object.keys(modelObj.properties);
-                                }
-                            } catch (e) {}
-                            const componentName = answers.name;
-                            // Create mock data object
-                            const mockData = fields.map(f => `    ${f}: 'mock_${f}'`).join(',\n');
-                            const testCode = `import React from 'react';\nimport {render} from '@testing-library/react';\nimport ${componentName} from './index.jsx';\n\ndescribe('${componentName}', () => {\n    it('renders with mock data', () => {\n        const mockProps = {\n${mockData}\n        };\n        const { container } = render(<${componentName} {...mockProps} />);\n        expect(container).toMatchSnapshot();\n    });\n});\n`;
-                            // Write to test file using fs/promises and path
-                            const fsPromises = await import('fs/promises');
-                            const pathModule = await import('path');
-                            const componentDir = pathModule.join(answers.location, componentName);
-                            const testFile = pathModule.join(componentDir, 'index.test.jsx');
-                            await fsPromises.writeFile(testFile, testCode, 'utf8');
-                            session.step = 99;
-                            return done('Component and test file updated with presentational logic and mock data. Flow complete.');
-                        } else {
-                            session.step = 99;
-                            return done('Component creation flow complete.');
+                            session.dataModel = dataModel;
+                            return next(result + `\n\n${hookResult}\nComponent creation flow complete.`);
                         }
                     case 99:
                         return done('Component creation flow complete.');

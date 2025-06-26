@@ -192,24 +192,51 @@ describe('${componentName}', () => {
      * @param {string} location - The absolute path to the component's parent directory.
      * @param {object} dataModel - The data model schema (properties object).
      */
-    async updateComponentToPresentational(entityType, componentName, location, dataModel) {
+    async updateComponentToPresentational(entityType, componentName, location, dataModel, options = {}) {
         const componentDir = path.join(location, componentName)
         await fs.mkdir(componentDir, {recursive: true})
         const componentFilePath = path.join(componentDir, 'index.jsx')
-        // Generate JSX for all fields
         const fields = Object.keys(dataModel)
-        const propName = entityType
-        const jsxFields = fields
-            .map((field) =>
-                `        <div>${field}: {{{propName}.${field}?.toString?.() ?? ''}}</div>`.replace(
-                    /\{propName/g,
-                    propName
+        let code = ''
+        if (options.array) {
+            // For hooks like useProducts or useProductSearch
+            const propName = options.propName || (entityType + 's')
+            const jsxFields = fields
+                .map((field) =>
+                    `                    <div>${field}: {{item.${field}?.toString?.() ?? ''}}</div>`
                 )
-            )
-            .join('\n')
-        const code = `${getCopyrightHeader()}
+                .join('\n')
+            code = `${getCopyrightHeader()}
 import React from 'react';
 
+// This component expects a '${propName}' prop (array of ${entityType} objects).
+const ${componentName} = ({{ ${propName} }}) => (
+    <div>
+        {${propName}?.map((item) => (
+            <div key={item.id} style={{border: '1px solid #ccc', margin: 8, padding: 8}}>
+${jsxFields}
+            </div>
+        ))}
+    </div>
+);
+
+export default ${componentName};
+`
+        } else {
+            // For hooks like useProduct
+            const propName = entityType
+            const jsxFields = fields
+                .map((field) =>
+                    `        <div>${field}: {{{propName}.${field}?.toString?.() ?? ''}}</div>`.replace(
+                        /\{propName/g,
+                        propName
+                    )
+                )
+                .join('\n')
+            code = `${getCopyrightHeader()}
+import React from 'react';
+
+// This component expects a '${propName}' prop with the relevant data.
 const ${componentName} = ({{ ${propName} }}) => (
     <div>
 ${jsxFields}
@@ -218,27 +245,36 @@ ${jsxFields}
 
 export default ${componentName};
 `
+        }
         await fs.writeFile(componentFilePath, code, 'utf-8')
         return `✅ Updated ${componentFilePath} to presentational component for ${entityType}`
     }
 
     /**
      * Handles developer's hook selection and updates the component accordingly.
-     * @param {string} selectedHook - The hook selected by the developer (e.g., 'useProduct').
-     * @param {string} entityType - The entity type (e.g., 'product').
-     * @param {string} componentName - The component name.
-     * @param {string} location - The absolute path to the component's parent directory.
-     * @param {object} dataModels - An object mapping entity types to their data model schemas.
+     * The generated component expects the data as a prop (not from the hook directly).
      */
     async handleHookSelection(selectedHook, entityType, componentName, location, dataModels) {
-        // For now, only support 'useProduct' and 'product' entity
-        if (selectedHook === 'useProduct' && entityType === 'product' && dataModels.product) {
-            return await this.updateComponentToPresentational(
-                'product',
-                componentName,
-                location,
-                dataModels.product.properties
-            )
+        // Support for product entity hooks
+        if (entityType === 'product' && dataModels.product) {
+            if (selectedHook === 'useProduct') {
+                return await this.updateComponentToPresentational(
+                    'product',
+                    componentName,
+                    location,
+                    dataModels.product.properties,
+                    { array: false, propName: 'product' }
+                )
+            }
+            if (selectedHook === 'useProducts' || selectedHook === 'useProductSearch') {
+                return await this.updateComponentToPresentational(
+                    'product',
+                    componentName,
+                    location,
+                    dataModels.product.properties,
+                    { array: true, propName: 'products' }
+                )
+            }
         }
         // Add more hook/entity support as needed
         return 'Selected hook/entity not supported for presentational generation.'
