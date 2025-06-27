@@ -48,6 +48,7 @@ const semver = require('semver')
 const slugify = require('slugify')
 const generatorPkg = require('../package.json')
 const Handlebars = require('handlebars')
+const PROGRAM = require('../program.json')
 
 // Presets, Templates and Validators
 const {
@@ -56,7 +57,7 @@ const {
     presets: PRESETS,
     templates: TEMPLATES,
     validators: VALIDATORS
-} = require('../program.json').data
+} = PROGRAM.data
 
 // Questions composed of public presets and public templates.
 // NOTE: We have to do some weird stuff to determine if the thing we are selecting is a preset or a template.
@@ -460,14 +461,8 @@ const getAnswersFromStdin = async () => {
  * Prints the contents of program.json in a nicely formatted way and exits the process.
  */
 const printProgramJsonAndExit = () => {
-    try {
-        const programJson = require('../program.json')
-        console.log('program.json contents:')
-        console.log(JSON.stringify(programJson, null, 2))
-    } catch (err) {
-        console.error('Failed to import program.json:', err.message)
-    }
-    process.exit(1)
+    console.log(JSON.stringify(PROGRAM, null, 2))
+    process.exit(0)
 }
 
 const main = async (opts) => {
