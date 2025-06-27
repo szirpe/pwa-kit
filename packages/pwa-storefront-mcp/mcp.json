@@ -3,7 +3,10 @@
     "pwa-storefront-mcp": {
       "command": "node {{parent-dir-to-mcp}}/pwa-storefront-mcp/src/server/server.js",
       "transport": "stdio",
-      "args": []
+      "args": [],
+      "env": {
+        "PWA_STOREFRONT_APP_PATH": "{{parent-dir-to-mcp}}/generated-pwa-site/overrides/app"
+      }
     }
   }
 } 
