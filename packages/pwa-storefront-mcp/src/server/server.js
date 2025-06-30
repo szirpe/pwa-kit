@@ -11,8 +11,6 @@ import {z} from 'zod'
 import {DeveloperGuidelinesTool} from '../utils/pwa-developer-guideline-tool.js'
 import {CreateNewComponentTool} from '../utils/create-new-component-tool.js'
 import {HookRecommenderTool} from '../utils/hook-recommender-tool.js'
-import {createRequire} from 'module'
-const require = createRequire(import.meta.url)
 import productDocument from '../data/ProductDocument.json'
 import categoryDocument from '../data/CategoryDocument.json'
 import documentList from '../data/DocumentList.json'
