@@ -76,7 +76,7 @@ export async function runNpxCommand() {
         exec(command, (error) => {
             if (error) {
                 reject(error)
-                return;
+                return
             }
 
             fs.readFile(outputFilePath, 'utf-8')
@@ -113,16 +113,7 @@ export default {
             content: [
                 {
                     type: 'text',
-                    text: JSON.stringify(
-                        {
-                            guidelines: guidelinesText,
-                            cli,
-                            schemas,
-                            data
-                        },
-                        null,
-                        2
-                    )
+                    text: JSON.stringify({ guidelines: guidelinesText, cli, schemas, data }, null, 2)
                 }
             ]
         }
