@@ -10,7 +10,7 @@ import {exec} from 'child_process'
 import fs from 'fs/promises'
 
 // Project dependencies
-import {EmptyJsonSchema} from './utils'
+import {EmptyJsonSchema, runNpxCommand} from './utils'
 
 //const CREATE_APP_VERSION = 'latest'
 //const CREATE_APP_VERSION = '3.11.0-nightly-20250630080227'
@@ -66,26 +66,6 @@ If the user requests a project using a **template**:
 - Use the \`${NPX_COMMAND}\` command to run the \`${CREATE_APP_COMMAND}\` CLI tool when creating a new project.
 `
 
-export async function runNpxCommand() {
-    return new Promise((resolve, reject) => {
-        const tempDir = os.tmpdir()
-        const outputFilePath = path.join(tempDir, 'npx-output.json')
-        const errorFilePath = path.join(tempDir, 'npx-error.log')
-        const command = `${NPX_COMMAND} ${CREATE_APP_COMMAND} ${DISPLAY_PROGRAM_COMMAND} > ${outputFilePath} 2> ${errorFilePath}`
-
-        exec(command, (error) => {
-            if (error) {
-                reject(error)
-                return
-            }
-
-            fs.readFile(outputFilePath, 'utf-8')
-                .then((data) => resolve(data))
-                .catch((err) => reject(err))
-        })
-    })
-}
-
 export default {
     name: 'create_app_guidelines',
     description: `This tool is used to provide the agent with the instructions on how to use the @salesforce/pwa-kit-create-app CLI tool to create a new PWA Kit projects. Do not attempt to create a project without using this tool first.`,
@@ -95,7 +75,11 @@ export default {
 
         // Run the display program and get the output.
         try {
-            programOutput = await runNpxCommand()
+            programOutput = await runNpxCommand(
+                NPX_COMMAND,
+                CREATE_APP_COMMAND,
+                DISPLAY_PROGRAM_COMMAND
+            )
         } catch (err) {
             console.error('Failed to run display program:', err)
         }
