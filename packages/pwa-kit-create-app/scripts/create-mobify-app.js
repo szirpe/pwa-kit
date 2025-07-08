@@ -352,35 +352,28 @@ const runGenerator = (context, {outputDir, templateVersion, verbose}) => {
         assets.forEach((asset) => {
             sh.cp('-rf', p.join(packagePath, asset), outputDir)
         })
-
-        // Copy the .cursor/rules directory if it exists
-        if (sh.test('-e', CURSOR_RULES_FROM_DIR)) {
-            const outputCursorRulesDir = p.join(outputDir, '.cursor', 'rules')
-
-            // Create the directory if it doesn't exist
-            if (!sh.test('-e', outputCursorRulesDir)) {
-                fs.mkdirSync(outputCursorRulesDir, {recursive: true})
-            }
-
-            // Copy the contents of CURSOR_RULES_FROM_DIR to outputCursorRulesDir
-            const files = fs.readdirSync(CURSOR_RULES_FROM_DIR)
-            files.forEach((file) => {
-                sh.cp('-rf', p.join(CURSOR_RULES_FROM_DIR, file), outputCursorRulesDir)
-            })
-        }
     } else {
         console.log('Copying base template from package or npm: ', packagePath, outputDir)
         // Copy the base template either from the package or npm.
         sh.cp('-rf', packagePath, outputDir)
 
-        // Copy template specific assets over.
-        const assetsDir = p.join(ASSETS_TEMPLATES_DIR, id)
+        // Copy template specific assets over, if they exist.
+        const assetsDir = p.join(ASSETS_TEMPLATES_DIR, source.name || id)
         if (sh.test('-e', assetsDir)) {
+            console.log(`Copying template-specific assets from ${assetsDir}`)
             getFiles(assetsDir)
                 .map((file) => file.replace(assetsDir, ''))
                 .forEach((relFilePath) =>
                     processTemplate(relFilePath, assetsDir, outputDir, context)
                 )
+        } else {
+            // However, we expected to see assetsDir for retail-react-app template
+            if (source.name === '@salesforce/retail-react-app') {
+                console.error(
+                    `Error: cannot find template-specific assets for retail-react-app in directory ${assetsDir}`
+                )
+                process.exit(1)
+            }
         }
 
         // Update the generated projects version. NOTE: For bootstrapped projects this
@@ -396,6 +389,22 @@ const runGenerator = (context, {outputDir, templateVersion, verbose}) => {
 
         // Clean up
         sh.rm('-rf', tmp)
+    }
+
+    // Copy the .cursor/rules directory if it exists
+    if (sh.test('-e', CURSOR_RULES_FROM_DIR)) {
+        const outputCursorRulesDir = p.join(outputDir, '.cursor', 'rules')
+
+        // Create the directory if it doesn't exist
+        if (!sh.test('-e', outputCursorRulesDir)) {
+            fs.mkdirSync(outputCursorRulesDir, {recursive: true})
+        }
+
+        // Copy the contents of CURSOR_RULES_FROM_DIR to outputCursorRulesDir
+        const files = fs.readdirSync(CURSOR_RULES_FROM_DIR)
+        files.forEach((file) => {
+            sh.cp('-rf', p.join(CURSOR_RULES_FROM_DIR, file), outputCursorRulesDir)
+        })
     }
 
     // Install dependencies for the newly minted project.
