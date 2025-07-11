@@ -19,7 +19,7 @@ const CREATE_APP_COMMAND = isMonoRepo()
     : `@salesforce/pwa-kit-create-app@${CREATE_APP_VERSION}`
 
 const DISPLAY_PROGRAM_COMMAND = '--displayProgram'
-const NPX_COMMAND = 'npx'
+const COMMAND_RUNNER = isMonoRepo() ? 'node' : 'npx'
 
 const guidelinesText = `
 # PWA Kit Create App — Agent Usage Guidelines
@@ -66,7 +66,8 @@ If the user requests a project using a **template**:
 - Never attempt to create a project without using this tool.
 - When gathering answers for a template, ask questions one at a time to maintain clarity.
 - Presets and templates are mutually exclusive paths. Do not offer both options unless explicitly requested.
-- Use the \`${NPX_COMMAND}\` command to run the \`${CREATE_APP_COMMAND}\` CLI tool when creating a new project.
+- Do not pass any flags to the \`${CREATE_APP_COMMAND}\` CLI tool that are not listed in the program.json options".
+- Use the \`${COMMAND_RUNNER}\` command to run the \`${CREATE_APP_COMMAND}\` CLI tool when creating a new project.
 `
 
 export default {
@@ -78,10 +79,10 @@ export default {
 
         // Run the display program and get the output.
         try {
-            programOutput = await runCommand(NPX_COMMAND, [
+            programOutput = await runCommand(COMMAND_RUNNER, [
+                ...[COMMAND_RUNNER === 'npx' ? '--yes' : ''],
                 CREATE_APP_COMMAND,
-                DISPLAY_PROGRAM_COMMAND,
-                '--yes'
+                DISPLAY_PROGRAM_COMMAND
             ])
         } catch (err) {
             console.error('Failed to run display program:', err)
