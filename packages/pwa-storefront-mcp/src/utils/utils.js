@@ -10,6 +10,10 @@ import {spawn} from 'cross-spawn'
 import {zodToJsonSchema} from 'zod-to-json-schema'
 import {z} from 'zod'
 
+// CONSTANTS
+// const CREATE_APP_VERSION = 'latest'
+const CREATE_APP_VERSION = '3.11.0-nightly-20250710080214'
+
 // Private schema used to generate the JSON schema
 const emptySchema = z.object({}).strict()
 
@@ -82,4 +86,21 @@ export const runCommand = async (command, args = [], options = {}) => {
 export function isMonoRepo() {
     const lernaPath = path.resolve(process.env.WORKSPACE_FOLDER_PATHS, 'lerna.json')
     return fs.existsSync(lernaPath)
+}
+
+/**
+ * Returns the command or path to use for creating a new PWA Kit app.
+ *
+ * If the project is a monorepo (detected by the presence of lerna.json),
+ * it returns the absolute path to the local create-mobify-app.js script.
+ * Otherwise, it returns the npm package name with a specific version.
+ *
+ * @returns {string} The command or path to use for app creation.
+ */
+export const getCreateAppCommand = () => {
+    return isMonoRepo()
+        ? path.resolve(
+              `${process.env.WORKSPACE_FOLDER_PATHS}/packages/pwa-kit-create-app/scripts/create-mobify-app.js`
+          )
+        : `@salesforce/pwa-kit-create-app@${CREATE_APP_VERSION}`
 }

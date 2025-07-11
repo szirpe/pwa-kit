@@ -4,21 +4,12 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import path from 'path'
 
 // Project dependencies
-import {EmptyJsonSchema, isMonoRepo, runCommand} from './utils'
+import {EmptyJsonSchema, getCreateAppCommand, isMonoRepo, runCommand} from './utils'
 
-// const CREATE_APP_VERSION = 'latest'
-const CREATE_APP_VERSION = '3.11.0-nightly-20250710080214'
-
-const CREATE_APP_COMMAND = isMonoRepo()
-    ? path.resolve(
-          `${process.env.WORKSPACE_FOLDER_PATHS}/packages/pwa-kit-create-app/scripts/create-mobify-app.js`
-      )
-    : `@salesforce/pwa-kit-create-app@${CREATE_APP_VERSION}`
-
-const DISPLAY_PROGRAM_COMMAND = '--displayProgram'
+const CREATE_APP_COMMAND = getCreateAppCommand()
+const DISPLAY_PROGRAM_FLAG = '--displayProgram'
 const COMMAND_RUNNER = isMonoRepo() ? 'node' : 'npx'
 
 const guidelinesText = `
@@ -80,9 +71,9 @@ export default {
         // Run the display program and get the output.
         try {
             programOutput = await runCommand(COMMAND_RUNNER, [
-                ...[COMMAND_RUNNER === 'npx' ? '--yes' : ''],
+                ...(COMMAND_RUNNER === 'npx' ? ['--yes'] : []),
                 CREATE_APP_COMMAND,
-                DISPLAY_PROGRAM_COMMAND
+                DISPLAY_PROGRAM_FLAG
             ])
         } catch (err) {
             console.error('Failed to run display program:', err)
