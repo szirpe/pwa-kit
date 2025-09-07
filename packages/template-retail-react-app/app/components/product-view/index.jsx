@@ -47,6 +47,7 @@ import {API_ERROR_MESSAGE} from '@salesforce/retail-react-app/app/constants'
 import DisplayPrice from '@salesforce/retail-react-app/app/components/display-price'
 import Swatch from '@salesforce/retail-react-app/app/components/swatch-group/swatch'
 import SwatchGroup from '@salesforce/retail-react-app/app/components/swatch-group'
+import CompareButton from '@salesforce/retail-react-app/app/components/compare-button'
 import {getPriceData} from '@salesforce/retail-react-app/app/utils/product-utils'
 import PromoCallout from '@salesforce/retail-react-app/app/components/product-tile/promo-callout'
 
@@ -373,6 +374,19 @@ const ProductView = forwardRef(
                             ? buttonText.addBundleToWishlist
                             : buttonText.addToWishlist}
                     </ButtonWithRegistration>
+                )
+            }
+
+            // Add compare button if not part of a bundle
+            if (!isProductPartOfBundle) {
+                buttons.push(
+                    <CompareButton
+                        key="compare-button"
+                        product={product}
+                        variant="button"
+                        size="md"
+                        width="100%"
+                    />
                 )
             }
 
