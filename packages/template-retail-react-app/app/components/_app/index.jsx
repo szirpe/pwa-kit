@@ -32,12 +32,14 @@ import {
 import {SkipNavLink, SkipNavContent} from '@chakra-ui/skip-nav'
 
 // Contexts
-import {CurrencyProvider} from '@salesforce/retail-react-app/app/contexts'
+import {CurrencyProvider, ComparisonProvider} from '@salesforce/retail-react-app/app/contexts'
 
 // Local Project Components
 import Header from '@salesforce/retail-react-app/app/components/header'
 import OfflineBanner from '@salesforce/retail-react-app/app/components/offline-banner'
 import OfflineBoundary from '@salesforce/retail-react-app/app/components/offline-boundary'
+import ComparisonDrawer from '@salesforce/retail-react-app/app/components/comparison-drawer'
+import ComparisonBadge from '@salesforce/retail-react-app/app/components/comparison-badge'
 import ScrollToTop from '@salesforce/retail-react-app/app/components/scroll-to-top'
 import Footer from '@salesforce/retail-react-app/app/components/footer'
 import CheckoutHeader from '@salesforce/retail-react-app/app/pages/checkout/partials/checkout-header'
@@ -314,7 +316,8 @@ const App = (props) => {
                     defaultLocale={DEFAULT_LOCALE}
                 >
                     <CurrencyProvider currency={currency}>
-                        <Seo>
+                        <ComparisonProvider>
+                            <Seo>
                             <meta name="theme-color" content={THEME_COLOR} />
                             <meta name="apple-mobile-web-app-title" content={DEFAULT_SITE_TITLE} />
                             <link
@@ -441,8 +444,11 @@ const App = (props) => {
 
                                 <AuthModal {...authModal} />
                                 <DntNotification {...dntNotification} />
+                                <ComparisonDrawer />
+                                <ComparisonBadge />
                             </AddToCartModalProvider>
                         </Box>
+                        </ComparisonProvider>
                     </CurrencyProvider>
                 </IntlProvider>
             </StorefrontPreview>
